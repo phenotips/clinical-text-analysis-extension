@@ -15,6 +15,7 @@ atlassian-ide-plugin.xml
 .settings
 .checkstyle
 .fbprefs
+.metadata
 bin
 
 .DS_Store
