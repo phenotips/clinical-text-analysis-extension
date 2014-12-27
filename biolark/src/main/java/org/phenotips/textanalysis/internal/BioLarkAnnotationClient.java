@@ -32,7 +32,7 @@ import javax.inject.Singleton;
  * Implementation of AnnotationClient using BioLark.
  *
  * @version $Id$
- * @since
+ * @since 1.0M1
  */
 @Component
 @Singleton

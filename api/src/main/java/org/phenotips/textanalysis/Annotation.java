@@ -25,7 +25,7 @@ import org.phenotips.ontology.OntologyTerm;
  * Contains information about a recognized phenotype from text.
  *
  * @version $Id$
- * @since 1.0M11
+ * @since 1.0M1
  */
 public class Annotation
 {

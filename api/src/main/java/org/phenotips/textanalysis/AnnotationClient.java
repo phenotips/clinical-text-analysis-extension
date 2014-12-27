@@ -27,7 +27,7 @@ import org.xwiki.component.annotation.Role;
  * and identify phenotype descriptions with it.
  *
  * @version $Id$
- * @since 1.0M11
+ * @since 1.0M1
  */
 @Role
 public interface AnnotationClient
