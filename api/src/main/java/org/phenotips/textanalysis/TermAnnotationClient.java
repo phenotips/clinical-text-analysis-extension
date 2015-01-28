@@ -19,6 +19,8 @@
  */
 package org.phenotips.textanalysis;
 
+import java.util.List;
+
 import org.xwiki.component.annotation.Role;
 
 
@@ -30,7 +32,7 @@ import org.xwiki.component.annotation.Role;
  * @since 1.0M1
  */
 @Role
-public interface AnnotationClient
+public interface TermAnnotationClient
 {
     /**
      * Scan text for phenotype descriptions.
@@ -39,13 +41,13 @@ public interface AnnotationClient
      * @return list of annotations for items recognized in the text.
      * @throws AnnotationException when annotation failed.
      */
-    Annotation[] annotate(String text) throws AnnotationException;
-
+    List<TermAnnotation> annotate(String text) throws AnnotationException;
+    
     /**
      * Exception thrown when the annotation process failed.
      *
      * @version $Id$
-     * @since 1.0M11
+     * @since 1.0M1
      */
     public class AnnotationException extends Exception
     {
