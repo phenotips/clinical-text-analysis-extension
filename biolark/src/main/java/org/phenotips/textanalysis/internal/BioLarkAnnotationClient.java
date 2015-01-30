@@ -21,14 +21,25 @@ package org.phenotips.textanalysis.internal;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.phenotips.ontology.OntologyManager;
 import org.phenotips.ontology.OntologyTerm;
@@ -47,13 +58,13 @@ import au.edu.uq.eresearch.biolark.cr.BioLarK_CR;
  */
 @Component
 public class BioLarkAnnotationClient implements TermAnnotationClient {
-	
+
 	/**
 	 * Ontology used to look up Phenotype term Ids
 	 */
 	@Inject
 	private OntologyManager ontologies;
-	
+
 	/**
 	 * Biolark annotation plugin
 	 */
@@ -61,51 +72,97 @@ public class BioLarkAnnotationClient implements TermAnnotationClient {
 
 	public BioLarkAnnotationClient() throws AnnotationException {
 
-		// String biolarkRootPath = "resources/BioLark-CR/";
-		String propertiesPath = "resources/BioLark-CR/cr.properties";
 		try {
-			generateBiolarkProperties(propertiesPath);
+			String propertiesPath = generateBiolarkResources();
+			biolark = new BioLarK_CR(propertiesPath);
 		} catch (IOException e) {
 			throw new AnnotationException(
 					"Couldn't create BioLark properties file");
 		}
-		biolark = new BioLarK_CR(propertiesPath);
 	}
 
 	/**
 	 * Creates a properties file to be used by the biolark annotation plugin
 	 * 
-	 * @param filepath path at which the file will be created
 	 * @throws IOException
 	 */
-	private void generateBiolarkProperties(String filepath) throws IOException {
+	private String generateBiolarkResources() throws IOException {
 
-		//Create properties file
-		File biolarkProperties = new File(filepath);
-		String biolarkRoot = biolarkProperties.getParentFile()
-				.getAbsolutePath();
+		File biolarkRoot = new File("resources/BioLark-CR/");
+		File biolarkProperties = new File(biolarkRoot, "cr.properties");
+		File emptyDir = new File(biolarkRoot.getAbsolutePath() + "/empty");
+		File taTmpDir = new File(biolarkRoot.getAbsolutePath() + "/ta_tmp");
 
-		// Write to file
-		FileOutputStream fos = new FileOutputStream(biolarkProperties);
+		// Check for existing biolark files
+		if (biolarkProperties.exists() && !biolarkProperties.isDirectory()) {
+			return biolarkProperties.getAbsolutePath();
+		}
+
+		// Create Biolark work directories
+		boolean success = biolarkRoot.mkdir() && emptyDir.mkdir()
+				&& taTmpDir.mkdir();
+		if (!success) {
+			throw new IOException("Error creating biolark directories");
+		}
+
+		// Download and extract biolark files
+		String pathToArchive = "biolark_resources.jar";
+		URL website = new URL(
+				"http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/content/org/biolark/biolark-resources/0.1/biolark-resources-0.1.jar");
+		ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+		FileOutputStream fos = new FileOutputStream(pathToArchive);
+		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+		fos.close();
+		try {
+			extractArchive(new File(pathToArchive), biolarkRoot);
+		} catch (ArchiveException e) {
+			throw new IOException(e.getMessage());
+		}
+
+		// Create properties file
+		fos = new FileOutputStream(biolarkProperties);
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 		bw.write("logLevel=INFO\n");
 		bw.write("longestMatch=FALSE\n");
 		bw.write("outputFormat=text\n");
-		bw.append("path=").append(biolarkRoot);
+		bw.append("path=").append(biolarkRoot.getAbsolutePath());
 		bw.newLine();
-		bw.append("inputFolder=").append(biolarkRoot).append("empty\n");
-		bw.append("outputFolder=").append(biolarkRoot).append("empty\n");
+		bw.append("inputFolder=").append(emptyDir.getAbsolutePath());
+		bw.newLine();
+		bw.append("outputFolder=").append(emptyDir.getAbsolutePath());
+		bw.newLine();
+		fos.close();
 		bw.close();
+
+		return biolarkProperties.getAbsolutePath();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Unzips archive into targetDir
+	 * @param archive zip archive
+	 * @param targetDir
+	 * @throws IOException
+	 * @throws ArchiveException
 	 */
+	private void extractArchive(File archive, File targetDir)
+			throws IOException, ArchiveException {
+		final InputStream is = new FileInputStream(archive);
+		final ArchiveInputStream in = new ArchiveStreamFactory()
+				.createArchiveInputStream("zip", is);
+		final ZipArchiveEntry entry = (ZipArchiveEntry) in.getNextEntry();
+		final OutputStream out = new FileOutputStream(new File(targetDir,
+				entry.getName()));
+		IOUtils.copy(in, out);
+		out.close();
+		in.close();
+	}
+
 	@Override
 	public List<TermAnnotation> annotate(String text)
 			throws AnnotationException {
 
-		List<Annotation> biolarkAnnotations = biolark.annotate_plain(text, false);
+		List<Annotation> biolarkAnnotations = biolark.annotate_plain(text,
+				false);
 		List<TermAnnotation> finalAnnotations = new LinkedList<TermAnnotation>();
 
 		// Resolve each termID against Phenotype ontology
@@ -116,7 +173,7 @@ public class BioLarkAnnotationClient implements TermAnnotationClient {
 			if (term != null) {
 				long start = biolarkAnnotation.getStartOffset();
 				long end = biolarkAnnotation.getEndOffset();
-				finalAnnotations.add(new TermAnnotation(start , end, term));
+				finalAnnotations.add(new TermAnnotation(start, end, term));
 			}
 		}
 		return finalAnnotations;
