@@ -1,1 +1,2 @@
 org.phenotips.textanalysis.internal.BioLarkAnnotationClient
+org.phenotips.textanalysis.internal.BiolarkWrapperImpl

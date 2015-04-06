@@ -30,41 +30,87 @@ import org.phenotips.ontology.OntologyTerm;
 public class TermAnnotation
 {
     private final long mStartPos;
+
     private final long mEndPos;
+
     private final OntologyTerm mTerm;
 
     /**
-     * Constructs an annotation for a an ontology term
-     * using it's start and end positions within the text.
+     * Constructs an annotation for a an ontology term using it's start and end positions within the text.
      *
      * @param start position in text where the ontology term occurs
      * @param end position in text where the the ontology term occurance ends
      * @param term the ontology term found in the text
      */
-    public TermAnnotation(long start, long end, OntologyTerm term) {
-        mStartPos = start;
-        mEndPos = end;
-        mTerm = term;
+    public TermAnnotation(long start, long end, OntologyTerm term)
+    {
+        this.mStartPos = start;
+        this.mEndPos = end;
+        this.mTerm = term;
     }
 
     /**
      * @return position in text where the ontology term occurs
      */
-    public long getStartPos() {
-        return mStartPos;
+    public long getStartPos()
+    {
+        return this.mStartPos;
     }
 
     /**
      * @return position in text where the the ontology term occurance ends
      */
-    public long getEndPos() {
-        return mEndPos;
+    public long getEndPos()
+    {
+        return this.mEndPos;
     }
 
     /**
      * @return the ontology term found in the text
      */
-    public OntologyTerm getTerm() {
-        return mTerm;
+    public OntologyTerm getTerm()
+    {
+        return this.mTerm;
     }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (this.mEndPos ^ (this.mEndPos >>> 32));
+        result = prime * result + (int) (this.mStartPos ^ (this.mStartPos >>> 32));
+        result = prime * result + ((this.mTerm == null) ? 0 : this.mTerm.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TermAnnotation other = (TermAnnotation) obj;
+        if (this.mEndPos != other.mEndPos) {
+            return false;
+        }
+        if (this.mStartPos != other.mStartPos) {
+            return false;
+        }
+        if (this.mTerm == null) {
+            if (other.mTerm != null) {
+                return false;
+            }
+        } else if (!this.mTerm.getId().equals(other.mTerm.getId())) {
+            return false;
+        }
+        return true;
+    }
+
 }

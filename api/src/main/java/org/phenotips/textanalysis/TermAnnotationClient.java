@@ -19,14 +19,12 @@
  */
 package org.phenotips.textanalysis;
 
-import java.util.List;
-
 import org.xwiki.component.annotation.Role;
 
+import java.util.List;
 
 /**
- * AnnotationClient implementations work with free form text
- * and identify phenotype descriptions with it.
+ * AnnotationClient implementations work with free form text and identify phenotype descriptions with it.
  *
  * @version $Id$
  * @since 1.0M1
@@ -42,7 +40,7 @@ public interface TermAnnotationClient
      * @throws AnnotationException when annotation failed.
      */
     List<TermAnnotation> annotate(String text) throws AnnotationException;
-    
+
     /**
      * Exception thrown when the annotation process failed.
      *
@@ -56,7 +54,8 @@ public interface TermAnnotationClient
          *
          * @param message the detail message
          */
-        public AnnotationException(String message) {
+        public AnnotationException(String message)
+        {
             super(message);
         }
     }
