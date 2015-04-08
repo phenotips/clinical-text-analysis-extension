@@ -17,33 +17,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.phenotips.textanalysis.internal;
 
-import org.phenotips.ontology.OntologyManager;
-import org.phenotips.textanalysis.Annotation;
-import org.phenotips.textanalysis.AnnotationClient;
+package org.phenotips.textanalysis;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.observation.EventListener;
+import org.xwiki.observation.event.ApplicationStartedEvent;
+import org.xwiki.observation.event.Event;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Implementation of AnnotationClient using BioLark.
+ * Hook into phenotips startup to pre-initialize Term Annotation Service.
  *
+ * @since 1.1M1
  * @version $Id$
- * @since 1.0M1
  */
+
 @Component
+@Named("termannotationserviceinitializer")
 @Singleton
-public class BioLarkAnnotationClient implements AnnotationClient
+public class TermAnnotationServiceInitializer implements EventListener
 {
+    @SuppressWarnings("unused")
     @Inject
-    private OntologyManager ontologies;
+    private TermAnnotationService service;
 
     @Override
-    public Annotation[] annotate(String text) throws AnnotationException {
-        //TODO: implement me
-        return null;
+    public String getName()
+    {
+        return "termannotationserviceinitializer";
+    }
+
+    @Override
+    public List<Event> getEvents()
+    {
+        return Arrays.<Event>asList(new ApplicationStartedEvent());
+    }
+
+    @Override
+    public void onEvent(Event event, Object o, Object o2)
+    {
+        // don't do anything, just injecting the service.
     }
 }

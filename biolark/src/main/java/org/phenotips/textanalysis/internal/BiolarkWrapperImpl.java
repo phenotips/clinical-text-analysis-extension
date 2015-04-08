@@ -93,8 +93,8 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
         }
 
         // Create Biolark work directories
-        biolarkRoot.mkdir();
-        emptyDir.mkdir();
+        biolarkRoot.mkdirs();
+        emptyDir.mkdirs();
 
         // Download and extract biolark files
         final String pathToArchive = "biolark_resources.jar";
