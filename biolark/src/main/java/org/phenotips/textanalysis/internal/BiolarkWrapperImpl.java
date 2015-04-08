@@ -20,7 +20,7 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
     {
         String propertiesPath;
         try {
-            propertiesPath = BioLarkResourceUtils.generateBiolarkResources();
+            propertiesPath = (new BioLarkResourceGenerator()).generateBiolarkResources();
             this.biolark = new BioLarK_CR(propertiesPath);
         } catch (IOException e) {
             throw new InitializationException(e.getMessage());

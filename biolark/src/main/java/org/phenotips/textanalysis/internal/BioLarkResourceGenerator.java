@@ -39,7 +39,7 @@ import net.lingala.zip4j.exception.ZipException;
  * @since 1.0M1
  */
 @Component
-public final class BioLarkResourceUtils
+public final class BioLarkResourceGenerator
 {
     /** Relative path to the directory containing biolark resources. */
     public static final String ROOT_DIRECTORY = "resources/BioLark-CR/";
@@ -55,9 +55,9 @@ public final class BioLarkResourceUtils
         "http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/"
             + "content/org/biolark/biolark-resources/0.1/biolark-resources-0.1.jar";
 
-    private BioLarkResourceUtils()
+    public BioLarkResourceGenerator()
     {
-        // Private constructor prevents instantiation of utility class
+        // do nothing
     }
 
     /**
@@ -66,14 +66,14 @@ public final class BioLarkResourceUtils
      * @return path to generated biolark properties file
      * @throws IOException in case of error in reading/writing property files
      */
-    public static String generateBiolarkResources() throws IOException
+    public String generateBiolarkResources() throws IOException
     {
-        final File biolarkRoot = new File(BioLarkResourceUtils.ROOT_DIRECTORY);
+        final File biolarkRoot = new File(BioLarkResourceGenerator.ROOT_DIRECTORY);
         final File biolarkProperties =
-            new File(biolarkRoot, BioLarkResourceUtils.PROPERTIES_FILENAME);
+            new File(biolarkRoot, BioLarkResourceGenerator.PROPERTIES_FILENAME);
         final File emptyDir =
             new File(biolarkRoot.getAbsolutePath() + "/"
-                + BioLarkResourceUtils.IO_FILENAME);
+                + BioLarkResourceGenerator.IO_FILENAME);
 
         // Check for existing biolark files
         if (biolarkProperties.exists() && !biolarkProperties.isDirectory()) {
@@ -87,7 +87,7 @@ public final class BioLarkResourceUtils
         // Download and extract biolark files
         final String pathToArchive = "biolark_resources.jar";
         File resources =
-            downloadFile(pathToArchive, BioLarkResourceUtils.RESOURCE_FILES_URL);
+            downloadFile(pathToArchive, BioLarkResourceGenerator.RESOURCE_FILES_URL);
         extractArchive(resources, biolarkRoot);
 
         // Create properties file
@@ -113,7 +113,7 @@ public final class BioLarkResourceUtils
      * @param targetDir
      * @throws IOException
      */
-    public static void extractArchive(File archive, File targetDir)
+    public void extractArchive(File archive, File targetDir)
         throws IOException
     {
         try {
@@ -135,11 +135,11 @@ public final class BioLarkResourceUtils
      * @return File which was downloaded
      * @throws IOException
      */
-    public static File downloadFile(String fileName, String url)
+    public File downloadFile(String fileName, String url)
         throws IOException
     {
         final URL resourcesURL =
-            new URL(BioLarkResourceUtils.RESOURCE_FILES_URL);
+            new URL(BioLarkResourceGenerator.RESOURCE_FILES_URL);
         final ReadableByteChannel rbc =
             Channels.newChannel(resourcesURL.openStream());
         FileOutputStream fos = new FileOutputStream(fileName);
@@ -153,7 +153,7 @@ public final class BioLarkResourceUtils
      *
      * @param target File or directory to modify
      */
-    public static void makeExecutable(File target)
+    public void makeExecutable(File target)
     {
         if (target.isFile()) {
             target.setExecutable(true);

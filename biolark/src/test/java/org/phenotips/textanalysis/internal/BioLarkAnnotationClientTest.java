@@ -58,6 +58,7 @@ public class BioLarkAnnotationClientTest
         String text = "The lady has " + term;
         int start = text.length();
         int end = start + term.length();
+        String termId = "test id";
 
         List<Annotation> biolarkResult = new LinkedList<Annotation>();
         Annotation blueEyesAnnotation = new Annotation();
@@ -76,6 +77,7 @@ public class BioLarkAnnotationClientTest
         OntologyManager ontologyManager =
             this.mocker.getInstance(OntologyManager.class);
         OntologyTerm t = mock(OntologyTerm.class);
+        when(t.getId()).thenReturn(termId);
         when(ontologyManager.resolveTerm("blue:eyes")).thenReturn(t);
 
         List<TermAnnotation> expected = new LinkedList<TermAnnotation>();
