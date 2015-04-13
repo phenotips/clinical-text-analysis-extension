@@ -120,75 +120,95 @@
       <cache>forbid</cache>
     </property>
     <property>
-      <code>var tempText = "Johnathan ate seven apples using his blue eyes and ...";
-var start = tempText.indexOf("blue eyes");
-var end = start + "blue eyes".length;
-var allSuggestions = [];
-
-for(var i = 0; i &lt; 10; i++) {
-  allSuggestions.push({'text' : tempText, 'start' : start, 'end' : end});
-}
-
-var currentSuggestions = [allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift()];
-
-var generateSuggestion = function() {
-  var nextSuggestion = currentSuggestions.shift();
-  if(nextSuggestion) {
-    text = nextSuggestion.text;
-    start = nextSuggestion.start;
-    end = nextSuggestion.end;
- 
-    return new Element('div', {'class' : 'suggestion'}).insert(
-      new Element('div', {'class' : 'suggestion-headline'}).insert(
-        '&lt;span class="yes-no-picker initialized"&gt;&lt;label class="yes" title="YES (investigated and observed)" for=""&gt;&lt;input type="checkbox" value="HP:0001142" title="Lenticonus" name="PhenoTips.PatientClass_0_phenotype" id="" style="display: none;"&gt;Y&lt;/label&gt;&lt;label class="no" title="NO (investigated and NOT observed)" for=""&gt;&lt;input type="checkbox" value="HP:0001142" title="Lenticonus" name="PhenoTips.PatientClass_0_negative_phenotype" id="" style="display: none;"&gt;N&lt;/label&gt;&lt;/span&gt;'
+      <code>document.observe('xwiki:dom:loaded', function() {
+      
+    var fetchAnnotations = function(text) {
+      var queryString = '?outputSyntax=plain&amp;text=' + encodeURIComponent(sampleText);
+      new Ajax.Request(new XWiki.Document('AnnotationService', 'PhenoTips').getURL('get') + queryString,
+        {
+          onCreate : function() {
+            // create loading text
+          },
+          onSuccess : function(response) {
+            var data = response.responseJSON;
+            for (var annotation in data) {
+              if (data.hasOwnProperty(annotation)) {
+                // remove all mentioned phenotypes
+              }
+            }
+            updateSuggestionBoxes(data);
+          },
+          onComplete : function () {
+            // remove "loading" text
+          }
+        });
+    };
+    
+    var updateSuggestionBoxes = function(annotations) {
+      suggestionsContainer.update(
+      new Element('table', {"class" : "suggestions-table"}).insert(
+        new Element('tr').insert(
+          new Element('td', {"class" : tdClass}).insert(generateSuggestion(annotations))
         ).insert(
-          new Element("span", {"class" : "suggestion-term"}).update(text.substring(start, end).replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}))
-        ).insert('&lt;span class="xHelpButton fa fa-info-circle phenotype-info" title="About this phenotype"&gt;&lt;/span&gt;')
-    ).insert(
-      new Element('div', {'class' : 'suggestion-quote'}).insert(
-        text.substring(0, start) 
+          new Element('td', {"class" : tdClass}).insert(generateSuggestion(annotations))
+        )
       ).insert(
-        new Element('span', {'class' : 'quoted-term'}).update(text.substring(start, end))
-      ).insert(
-        text.substring(end)
-      )
-    ).insert(
-      new Element('div', {'class' : 'hide-suggestion'}).update("✖")
-    )
-  }
+        new Element('tr').insert(
+          new Element('td', {"class" : tdClass}).insert(generateSuggestion(annotations))
+        ).insert(
+          new Element('td', {"class" : tdClass}).insert(generateSuggestion(annotations))
+        )
+      ));
+    }
+    
+    // generate suggestion from first suggestion in current suggestions list
+    var generateSuggestion = function(annotations) {
+      var nextSuggestion = annotations.shift();
+      if(nextSuggestion) {
+        text = nextSuggestion.text;
+        start = nextSuggestion.start;
+        end = nextSuggestion.end;
+     
+        return new Element('div', {'class' : 'suggestion'}).insert(
+          new Element('div', {'class' : 'suggestion-headline'}).insert(
+            '&lt;span class="yes-no-picker initialized"&gt;&lt;label class="yes" title="YES (investigated and observed)" for=""&gt;&lt;input type="checkbox" value="HP:0001142" title="Lenticonus" name="PhenoTips.PatientClass_0_phenotype" id="" style="display: none;"&gt;Y&lt;/label&gt;&lt;label class="no" title="NO (investigated and NOT observed)" for=""&gt;&lt;input type="checkbox" value="HP:0001142" title="Lenticonus" name="PhenoTips.PatientClass_0_negative_phenotype" id="" style="display: none;"&gt;N&lt;/label&gt;&lt;/span&gt;'
+            ).insert(
+              new Element("span", {"class" : "suggestion-term"}).update(text.substring(start, end).replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}))
+            ).insert('&lt;span class="xHelpButton fa fa-info-circle phenotype-info" title="About this phenotype"&gt;&lt;/span&gt;')
+        ).insert(
+          new Element('div', {'class' : 'suggestion-quote'}).insert(
+            text.substring(0, start) 
+          ).insert(
+            new Element('span', {'class' : 'quoted-term'}).update(text.substring(start, end))
+          ).insert(
+            text.substring(end)
+          )
+        ).insert(
+          new Element('div', {'class' : 'hide-suggestion'}).update("✖")
+        )
+      }
 
-  console.log("Out of Suggestions");
-  return null;
-}
+      console.log("Out of Suggestions");
+      return null;
+    }
 
-var clinicalNotesSubPanel = 
-  new Element('div', {"class" : "sub-panel"}).insert(
-    new Element('h3', {"class" : "wikigeneratedheader"}).update(
-      "&lt;span&gt;&lt;strong&gt;Suggestions from Clinical Notes&lt;/strong&gt;&lt;/span&gt;"
-    )
-  );
-
-var suggestionsContainer = new Element('div', {'id' : 'suggestions-container'});
-var tdClass = "suggestion-table-cell";
-suggestionsContainer.insert(
-  new Element('table', {"class" : "suggestions-table"}).insert(
-    new Element('tr').insert(
-      new Element('td', {"class" : tdClass}).insert(generateSuggestion())
-    ).insert(
-      new Element('td', {"class" : tdClass}).insert(generateSuggestion())
-    )
-  ).insert(
-    new Element('tr').insert(
-      new Element('td', {"class" : tdClass}).insert(generateSuggestion())
-    ).insert(
-      new Element('td', {"class" : tdClass}).insert(generateSuggestion())
-    )
-  )
-);
-
-clinicalNotesSubPanel.insert(suggestionsContainer);
-clinicalNotesSubPanel.insert(new Element("div", {"id" : "suggestion-count"}).update("4 of 15 suggestions"));
-$$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</code>
+    var suggestionsContainer = new Element('div', {'id' : 'suggestions-container'});
+    var tdClass = "suggestion-table-cell";
+    var clinicalNotesSubPanel = 
+      new Element('div', {"class" : "sub-panel"}).insert(
+        new Element('h3', {"class" : "wikigeneratedheader"}).update(
+          "&lt;span&gt;&lt;strong&gt;Suggestions from Clinical Notes&lt;/strong&gt;&lt;/span&gt;"
+        )
+      );
+    clinicalNotesSubPanel.insert(suggestionsContainer);
+    clinicalNotesSubPanel.insert(new Element("div", {"id" : "suggestion-count"}).update("4 of 15 suggestions"));
+    $$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});
+    
+    // generate innitial suggestions
+    var sampleText = "Johnathan ate seven apples using his blue eyes, but he was hearing impaired";
+    var annotations = [];
+    fetchAnnotations(sampleText);
+});</code>
     </property>
     <property>
       <name/>
