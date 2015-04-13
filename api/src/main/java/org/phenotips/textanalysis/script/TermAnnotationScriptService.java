@@ -48,7 +48,7 @@ public class TermAnnotationScriptService implements ScriptService
     private TermAnnotationService service;
 
     /**
-     * Returns a list of annotations of phenotypes found in text
+     * Returns a list of annotations of phenotypes found in text.
      *
      * @param text Free form text
      * @return list of annotations
