@@ -38,7 +38,7 @@ import org.apache.commons.io.FilenameUtils;
 import au.edu.uq.eresearch.biolark.cr.Annotation;
 
 /**
- * Implementation of AnnotationClient using BioLark.
+ * Implementation of {@link TermAnnotationService} using BioLark.
  *
  * @version $Id$
  * @since 1.0M1
