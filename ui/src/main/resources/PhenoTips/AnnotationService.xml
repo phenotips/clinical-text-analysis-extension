@@ -52,18 +52,21 @@
 #if ($text)
   #set ($results = [])
   #set ($annotations = $services.annotations.get($text))
+  #set ($hpoService = $services.ontologies.hpo)
   #if ($annotations)
     #foreach ($annotation in $annotations)
+      #set ($termId = $annotation.getTerm().getId())
       #set ($result = {
           'start' : $annotation.getStartPos(),
           'end' : $annotation.getEndPos(),
-          'id' : $annotation.getTerm().getId()
+          'id' : $termId,
+          'label' : $hpoService.getTerm($termId).name
         })
       #set ($discard = $results.add($result))
     #end
     $jsontool.serialize({"response": $results})
   #else
-    {"error": "Annotation error"}
+    {"error": "Annotation error", "a" : $services.annotations}
   #end
 #end
 #if ("$!{request.outputSyntax}" == 'plain')

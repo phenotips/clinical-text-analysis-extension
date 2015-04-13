@@ -162,12 +162,13 @@
     }
     
     // generate suggestion from first suggestion in current suggestions list
-    var generateSuggestion = function(annotations) {
+    var generateSuggestion = function(annotations, text) {
       var nextSuggestion = annotations.shift();
       if(nextSuggestion) {
-        text = nextSuggestion.text;
-        start = nextSuggestion.start;
-        end = nextSuggestion.end;
+        var start = nextSuggestion.start;
+        var end = nextSuggestion.end;
+        var quoteStart = Math.max(0, start - 22);
+        var quoteEnd = Math.min(start + 22, text.length)
      
         return new Element('div', {'class' : 'suggestion'}).insert(
           new Element('div', {'class' : 'suggestion-headline'}).insert(
@@ -177,11 +178,11 @@
             ).insert('&lt;span class="xHelpButton fa fa-info-circle phenotype-info" title="About this phenotype"&gt;&lt;/span&gt;')
         ).insert(
           new Element('div', {'class' : 'suggestion-quote'}).insert(
-            text.substring(0, start) 
+            "... " + text.substring(quoteStart, start)
           ).insert(
             new Element('span', {'class' : 'quoted-term'}).update(text.substring(start, end))
           ).insert(
-            text.substring(end)
+            text.substring(end, quoteEnd) + " ..."
           )
         ).insert(
           new Element('div', {'class' : 'hide-suggestion'}).update("✖")
