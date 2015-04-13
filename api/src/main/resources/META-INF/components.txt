@@ -1,1 +1,2 @@
-
+org.phenotips.textanalysis.internal.TermAnnotationServiceInitializer
+org.phenotips.textanalysis.script.TermAnnotationScriptService
