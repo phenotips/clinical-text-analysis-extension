@@ -17,15 +17,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.phenotips.textanalysis.script;
 
-package org.phenotips.textanalysis;
+import org.phenotips.textanalysis.TermAnnotation;
+import org.phenotips.textanalysis.TermAnnotationService;
+import org.phenotips.textanalysis.TermAnnotationService.AnnotationException;
 
 import org.xwiki.component.annotation.Component;
-import org.xwiki.observation.EventListener;
-import org.xwiki.observation.event.ApplicationStartedEvent;
-import org.xwiki.observation.event.Event;
+import org.xwiki.script.service.ScriptService;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,36 +33,32 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Hook into phenotips startup to pre-initialize Term Annotation Service.
+ * Service that suggests plausible diagnoses for a set of features.
  *
+ * @see TermAnnotationService
  * @since 1.1M1
  * @version $Id$
  */
-
 @Component
-@Named("termannotationserviceinitializer")
+@Named("annotations")
 @Singleton
-public class TermAnnotationServiceInitializer implements EventListener
+public class TermAnnotationScriptService implements ScriptService
 {
-    @SuppressWarnings("unused")
     @Inject
     private TermAnnotationService service;
 
-    @Override
-    public String getName()
+    /**
+     * Returns a list of annotations of phenotypes found in text
+     *
+     * @param text Free form text
+     * @return list of annotations
+     */
+    public List<TermAnnotation> get(String text)
     {
-        return "termannotationserviceinitializer";
-    }
-
-    @Override
-    public List<Event> getEvents()
-    {
-        return Arrays.<Event>asList(new ApplicationStartedEvent());
-    }
-
-    @Override
-    public void onEvent(Event event, Object o, Object o2)
-    {
-        // don't do anything, just injecting the service.
+        try {
+            return this.service.annotate(text);
+        } catch (AnnotationException e) {
+            return null;
+        }
     }
 }

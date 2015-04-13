@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.FilenameUtils;
@@ -43,6 +44,7 @@ import au.edu.uq.eresearch.biolark.cr.Annotation;
  * @since 1.0M1
  */
 @Component
+@Named("biolark")
 @Singleton
 public class BioLarkAnnotationService implements TermAnnotationService
 {
