@@ -33,10 +33,6 @@
   <packaging>pom</packaging>
   <name>PhenoTips - Clinical Text Analysis</name>
 
-  <properties>
-    <phenotips.version>1.0</phenotips.version>
-  </properties>
-
   <modules>
     <module>api</module>
     <module>biolark</module>
