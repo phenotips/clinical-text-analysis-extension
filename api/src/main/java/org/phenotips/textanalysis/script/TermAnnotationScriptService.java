@@ -45,6 +45,7 @@ import javax.inject.Singleton;
 public class TermAnnotationScriptService implements ScriptService
 {
     @Inject
+    @Named("biolark")
     private TermAnnotationService service;
 
     /**

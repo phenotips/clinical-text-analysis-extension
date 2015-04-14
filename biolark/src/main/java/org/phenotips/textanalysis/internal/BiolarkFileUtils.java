@@ -19,8 +19,6 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.xwiki.component.annotation.Component;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,7 +35,6 @@ import net.lingala.zip4j.exception.ZipException;
  * @version $Id$
  * @since 1.0M1
  */
-@Component
 public final class BiolarkFileUtils
 {
 

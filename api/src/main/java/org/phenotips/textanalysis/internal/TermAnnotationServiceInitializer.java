@@ -46,7 +46,6 @@ import javax.inject.Singleton;
 @Singleton
 public class TermAnnotationServiceInitializer implements EventListener
 {
-    @SuppressWarnings("unused")
     @Inject
     @Named("biolark")
     private TermAnnotationService service;
