@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.NotDirectoryException;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -95,6 +96,34 @@ public final class BiolarkFileUtils
             for (File file : target.listFiles()) {
                 makeExecutable(file);
             }
+        }
+    }
+
+    /**
+     * Builds project in target directory, by executing 'make clean && make'.
+     *
+     * @param target directory containing makefile
+     * @param runtime the Runtime instance of this application
+     * @throws BuildException if the build failed
+     * @throws NotDirectoryException if target is not a directory
+     */
+    public static void make(File target, Runtime runtime) throws BuildException, NotDirectoryException
+    {
+        if (target.isDirectory()) {
+            try {
+                 // run make clean && make
+                Process p = Runtime.getRuntime().exec("make clean && make", null, target);
+                p.waitFor();
+                if (p.exitValue() != 0) {
+                    throw new BuildException("Build failed");
+                }
+            } catch (IOException e) {
+                throw new BuildException(e.getMessage());
+            } catch (InterruptedException e) {
+                throw new BuildException(e.getMessage());
+            }
+        } else {
+            throw new NotDirectoryException(target.getPath());
         }
     }
 }

@@ -81,8 +81,9 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
      *
      * @return path to generated biolark properties file
      * @throws IOException in case of error in reading/writing property files
+     * @throws InitializationException if building one of biolark's dependencies fails
      */
-    public String generateBiolarkResources() throws IOException
+    public String generateBiolarkResources() throws IOException, InitializationException
     {
         final File biolarkRoot = new File(BiolarkWrapperImpl.ROOT_DIRECTORY);
         final File biolarkProperties = new File(biolarkRoot, BiolarkWrapperImpl.PROPERTIES_FILENAME);
@@ -103,6 +104,18 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
         final String pathToArchive = "biolark_resources.jar";
         File resources = BiolarkFileUtils.downloadFile(pathToArchive, BiolarkWrapperImpl.RESOURCE_FILES_URL);
         BiolarkFileUtils.extractArchive(resources, biolarkRoot);
+
+        // build extracted biolark dependencies
+        File dependencies = new File(biolarkRoot, "resources");
+        for (File dir : dependencies.listFiles()) {
+            if (dir.isDirectory() && new File(dir, "Makefile").exists()) {
+                try {
+                    BiolarkFileUtils.make(dir, Runtime.getRuntime());
+                } catch (BuildException e) {
+                    throw new InitializationException(e.getMessage());
+                }
+            }
+        }
 
         // Create properties file
         final FileWriter bw = new FileWriter(biolarkProperties);
