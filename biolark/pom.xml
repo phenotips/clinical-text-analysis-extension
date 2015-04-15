@@ -143,6 +143,11 @@
     </dependency>
     <dependency>
       <groupId>org.biolark</groupId>
+      <artifactId>biolark-variants</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.biolark</groupId>
       <artifactId>biolemmatizer-core</artifactId>
       <classifier>with-dependencies</classifier>
       <version>1.1</version>
