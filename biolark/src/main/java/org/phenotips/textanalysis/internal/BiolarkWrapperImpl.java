@@ -48,6 +48,9 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
     /** Name of directory for biolark generated input/output files, which will be ignored. */
     public static final String IO_FILENAME = "empty";
 
+    /** Name of directory for biolark generated temporary files. */
+    public static final String TA_TMP = "ta_tmp";
+
     /** Url of biolark resources archive. */
     public static final String RESOURCE_FILES_URL =
         "http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/"
@@ -81,11 +84,10 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
      */
     public String generateBiolarkResources() throws IOException
     {
-        final File biolarkRoot =
-            new File(BiolarkWrapperImpl.ROOT_DIRECTORY);
+        final File biolarkRoot = new File(BiolarkWrapperImpl.ROOT_DIRECTORY);
         final File biolarkProperties = new File(biolarkRoot, BiolarkWrapperImpl.PROPERTIES_FILENAME);
-        final File emptyDir = new File(biolarkRoot.getAbsolutePath() + "/"
-            + BiolarkWrapperImpl.IO_FILENAME);
+        final File emptyDir = new File(biolarkRoot, BiolarkWrapperImpl.IO_FILENAME);
+        final File taTmpDir = new File(biolarkRoot, BiolarkWrapperImpl.TA_TMP);
 
         // Check for existing biolark files
         if (biolarkProperties.exists() && !biolarkProperties.isDirectory()) {
@@ -95,6 +97,7 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
         // Create Biolark work directories
         biolarkRoot.mkdirs();
         emptyDir.mkdirs();
+        taTmpDir.mkdirs();
 
         // Download and extract biolark files
         final String pathToArchive = "biolark_resources.jar";
