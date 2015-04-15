@@ -30,7 +30,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 /**
- * Implementation of {@link TermAnnotationService} using BioLark.
+ * Implementation of TermAnnotationService using BioLark.
  *
  * @version $Id$
  * @since 1.0M1

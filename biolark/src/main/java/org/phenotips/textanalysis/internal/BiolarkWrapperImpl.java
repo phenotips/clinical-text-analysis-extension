@@ -48,7 +48,7 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
     /** Name of directory for biolark generated input/output files, which will be ignored. */
     public static final String IO_FILENAME = "empty";
 
-    /** Name of directory for biolark generated input/output files, which will be ignored. */
+    /** Url of biolark resources archive. */
     public static final String RESOURCE_FILES_URL =
         "http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/"
             + "content/org/biolark/biolark-resources/0.1/biolark-resources-0.1.jar";
