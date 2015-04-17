@@ -77,12 +77,12 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>phenotips-constants</artifactId>
-      <version>${project.version}</version>
+      <version>${phenotips.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ontology-access-api</artifactId>
-      <version>${project.version}</version>
+      <version>${phenotips.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.json-lib</groupId>

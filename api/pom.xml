@@ -47,8 +47,8 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>patient-similarity-data-api</artifactId>
-      <version>${project.version}</version>
+      <artifactId>ontology-access-api</artifactId>
+      <version>${phenotips.version}</version>
     </dependency>
     <dependency>
       <groupId>org.xwiki.commons</groupId>
