@@ -57,7 +57,7 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
     /** Url of biolark resources archive. */
     public static final String RESOURCE_FILES_URL =
         "http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/"
-            + "content/org/biolark/biolark-resources/0.1/biolark-resources-0.1.jar";
+            + "content/org/biolark/biolark-resources/0.1a/biolark-resources-0.1a.jar";
 
     @Inject
     private Environment environment;
