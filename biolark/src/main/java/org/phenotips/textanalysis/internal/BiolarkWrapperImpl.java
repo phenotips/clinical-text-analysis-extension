@@ -22,11 +22,14 @@ package org.phenotips.textanalysis.internal;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+import org.xwiki.environment.Environment;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import au.edu.uq.eresearch.biolark.cr.Annotation;
 import au.edu.uq.eresearch.biolark.cr.BioLarK_CR;
@@ -55,6 +58,9 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
     public static final String RESOURCE_FILES_URL =
         "http://nexus.cs.toronto.edu/nexus/service/local/repositories/externals/"
             + "content/org/biolark/biolark-resources/0.1/biolark-resources-0.1.jar";
+
+    @Inject
+    private Environment environment;
 
     private BioLarK_CR biolark;
 
@@ -85,7 +91,7 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
      */
     public String generateBiolarkResources() throws IOException, InitializationException
     {
-        final File biolarkRoot = new File(BiolarkWrapperImpl.ROOT_DIRECTORY);
+        final File biolarkRoot = new File(this.environment.getPermanentDirectory(), BiolarkWrapperImpl.ROOT_DIRECTORY);
         final File biolarkProperties = new File(biolarkRoot, BiolarkWrapperImpl.PROPERTIES_FILENAME);
         final File emptyDir = new File(biolarkRoot, BiolarkWrapperImpl.IO_FILENAME);
         final File taTmpDir = new File(biolarkRoot, BiolarkWrapperImpl.TA_TMP);
