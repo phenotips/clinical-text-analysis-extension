@@ -113,8 +113,7 @@ public final class BiolarkFileUtils
     {
         if (target.isDirectory()) {
             try {
-                // run make clean && make
-                Process p = Runtime.getRuntime().exec("make clean && make", null, target);
+                Process p = Runtime.getRuntime().exec("make -B", null, target);
                 p.waitFor();
                 if (p.exitValue() != 0) {
                     IOUtils.copy(p.getErrorStream(), System.out);
