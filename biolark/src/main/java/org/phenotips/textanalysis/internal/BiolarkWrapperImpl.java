@@ -107,7 +107,8 @@ public class BiolarkWrapperImpl implements BiolarkWrapper, Initializable
         taTmpDir.mkdirs();
 
         // Download and extract biolark files
-        final String pathToArchive = "biolark_resources.jar";
+        final String pathToArchive =
+            new File(this.environment.getTemporaryDirectory(), "biolark_resources.jar").getAbsolutePath();
         File resources = BiolarkFileUtils.downloadFile(pathToArchive, BiolarkWrapperImpl.RESOURCE_FILES_URL);
         BiolarkFileUtils.extractArchive(resources, biolarkRoot);
 
