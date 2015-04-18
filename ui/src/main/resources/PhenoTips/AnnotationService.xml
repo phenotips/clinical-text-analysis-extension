@@ -48,7 +48,7 @@
 #else
   {{html wiki="false" clean="false"}}
 #end
-#set ($text = $request.getParameterValues('text'))
+#set ($text = $request.getParameter('text'))
 #if ($text)
   #set ($results = [])
   #set ($annotations = $services.annotations.get($text))
