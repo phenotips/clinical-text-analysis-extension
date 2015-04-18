@@ -27,6 +27,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.NotDirectoryException;
 
+import org.apache.commons.io.IOUtils;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -111,11 +113,12 @@ public final class BiolarkFileUtils
     {
         if (target.isDirectory()) {
             try {
-                 // run make clean && make
+                // run make clean && make
                 Process p = Runtime.getRuntime().exec("make clean && make", null, target);
                 p.waitFor();
                 if (p.exitValue() != 0) {
-                    throw new BuildException("Build failed");
+                    IOUtils.copy(p.getErrorStream(), System.out);
+                    throw new BuildException("Build failed in " + target.getAbsolutePath());
                 }
             } catch (IOException e) {
                 throw new BuildException(e.getMessage());
