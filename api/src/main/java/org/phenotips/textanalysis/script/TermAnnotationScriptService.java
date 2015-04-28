@@ -17,33 +17,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.phenotips.textanalysis.internal;
+package org.phenotips.textanalysis.script;
 
-import org.phenotips.ontology.OntologyManager;
-import org.phenotips.textanalysis.Annotation;
-import org.phenotips.textanalysis.AnnotationClient;
+import org.phenotips.textanalysis.TermAnnotation;
+import org.phenotips.textanalysis.TermAnnotationService;
+import org.phenotips.textanalysis.TermAnnotationService.AnnotationException;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.script.service.ScriptService;
+
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Implementation of AnnotationClient using BioLark.
+ * Service that suggests plausible diagnoses for a set of features.
  *
+ * @see TermAnnotationService
+ * @since 1.1M1
  * @version $Id$
- * @since 1.0M1
  */
 @Component
+@Named("annotations")
 @Singleton
-public class BioLarkAnnotationClient implements AnnotationClient
+public class TermAnnotationScriptService implements ScriptService
 {
     @Inject
-    private OntologyManager ontologies;
+    @Named("biolark")
+    private TermAnnotationService service;
 
-    @Override
-    public Annotation[] annotate(String text) throws AnnotationException {
-        //TODO: implement me
-        return null;
+    /**
+     * Returns a list of annotations of phenotypes found in text.
+     *
+     * @param text Free form text
+     * @return list of annotations
+     */
+    public List<TermAnnotation> get(String text)
+    {
+        try {
+            return this.service.annotate(text);
+        } catch (AnnotationException e) {
+            return null;
+        }
     }
 }

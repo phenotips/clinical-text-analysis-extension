@@ -20,3 +20,12 @@ bin
 
 .DS_Store
 *~
+
+# Biolark artifacts
+biolark/resources/BioLark-CR/cr.properties
+biolark/resources/BioLark-CR/data_out/
+biolark/resources/BioLark-CR/data_in/
+biolark/resources/BioLark-CR/ta_tmp/*
+biolark/*.log
+
+
