@@ -1,23 +1,45 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
 <xwikidoc version="1.1">
   <web>PhenoTips</web>
   <name>Clinical Notes Annotation</name>
-  <language />
-  <defaultLanguage>en</defaultLanguage>
+  <language/>
+  <defaultLanguage/>
   <translation>0</translation>
-  <creator>XWiki.Admin</creator>
+  <creator>xwiki:XWiki.Admin</creator>
   <creationDate>1423071031000</creationDate>
-  <author>XWiki.Admin</author>
-  <contentAuthor>XWiki.Admin</contentAuthor>
-  <date>1423251899000</date>
-  <contentUpdateDate>1423247480000</contentUpdateDate>
-  <version>10.1</version>
-  <title />
-  <comment>Deleted object</comment>
+  <parent>PhenoTips.WebHome</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1430247533000</date>
+  <contentUpdateDate>1430160031000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <comment/>
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>false</hidden>
-  <content />
+  <content/>
   <object>
     <name>PhenoTips.Clinical Notes Annotation</name>
     <number>0</number>
@@ -25,13 +47,13 @@
     <guid>6af38783-9e99-485a-9c3c-ffa658637525</guid>
     <class>
       <name>XWiki.JavaScriptExtension</name>
-      <customClass />
-      <customMapping />
-      <defaultViewSheet />
-      <defaultEditSheet />
-      <defaultWeb />
-      <nameField />
-      <validationScript />
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
       <cache>
         <cache>0</cache>
         <disabled>0</disabled>
@@ -98,60 +120,385 @@
       <cache>forbid</cache>
     </property>
     <property>
-      <code>var generateSuggestion = function(target, text, start, end) {&#xd;
-  target.insert(&#xd;
-    new Element('div', {'class' : 'suggestion'}).insert(&#xd;
-      new Element('div', {'class' : 'suggestion-term'}).update(text.substring(start, end))&#xd;
-    ).insert(&#xd;
-      new Element('div', {'class' : 'suggestion-quote'}).insert(&#xd;
-        text.substring(0, start) &#xd;
-      ).insert(&#xd;
-        new Element('b', {'class' : 'quoted-term'}).update(text.substring(start, end))&#xd;
-      ).insert(&#xd;
-        text.substring(end)&#xd;
-      )&#xd;
-    ).insert(&#xd;
-      new Element('div', {'class' : 'hide-suggestion'}).update("✖")&#xd;
-    )&#xd;
-  );&#xd;
-}&#xd;
-&#xd;
-var tempText = "Johnathan ate seven apples using his blue eyes and ...";&#xd;
-var start = tempText.indexOf("blue eyes");&#xd;
-var end = start + "blue eyes".length;&#xd;
-var allSuggestions = [];&#xd;
-&#xd;
-for(var i = 0; i &lt; 10; i++) {&#xd;
-  allSuggestions.push({'text' : tempText, 'start' : start, 'end' : end});&#xd;
-}&#xd;
-&#xd;
-var currentSuggestions = [allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift(), allSuggestions.shift()];&#xd;
-&#xd;
-&#xd;
-&#xd;
-var clinicalNotesSubPanel = &#xd;
-  new Element('div', {"class" : "sub-panel"}).insert(&#xd;
-    new Element('h3', {"class" : "wikigeneratedheader"}).update(&#xd;
-      "&lt;span>&lt;strong>Suggestions from Clinical Notes&lt;/strong>&lt;/span>"&#xd;
-    )&#xd;
-  );&#xd;
-&#xd;
-var suggestionsContainer = new Element('div', {'id' : 'suggestions-container'});&#xd;
-currentSuggestions.forEach(function(item) {&#xd;
-  generateSuggestion(suggestionsContainer, item.text, item.start, item.end);&#xd;
-});&#xd;
-&#xd;
-clinicalNotesSubPanel.insert(suggestionsContainer);&#xd;
-$$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</code>
+      <code>document.observe('xwiki:dom:loaded', function() {
+
+// global variables
+
+  /**
+   * Suggestions that have been discarded or accepted.
+   * Maps Term IDs to annotation objects
+   */
+  var dismissedTerms = {};
+
+  /**
+   * Unfiltered results of annotation by the annotationService.
+   * Maps Term IDs to annotation objects
+   */
+  var annotationServiceResults = {};
+
+  /**
+   * List of suggestions that still haven't been displayed
+   */
+  var suggestionBank = [];
+
+  /**
+   * Suggestions that are currently displayed.
+   * Maps Term IDs to annotation objects
+   */
+  var currentSuggestions = {};
+
+  /**
+   * True if the Dismissed XClass instance exists for this patient
+   */
+  var existsDismissedSuggestionDataStore = false;
+
+  /**
+   * Number of suggestions to display in the UI
+   */
+  var numSuggestionsToDisplay = 4;
+
+  /**
+   * Text to be annotated
+   */
+  var text = "";
+
+  /**
+   * Container of the clinical notes annotation widget.
+   */
+  var widgetContainer = new Element('div', {"id" : 'annotation-widget-container'});
+
+  //generate initial UI elements
+  var panel = $$(".current-phenotype-selection")[0];
+  if(panel) {
+    var clinicalNotesSubPanel = 
+      new Element('div', {"class" : "sub-panel"}).insert(
+        new Element('h3', {"class" : "wikigeneratedheader"}).update(
+          "&lt;span&gt;&lt;strong&gt;Suggestions from Clinical Notes&lt;/strong&gt;&lt;/span&gt;"
+        ) 
+      ).insert(widgetContainer);
+    panel.insert({top : clinicalNotesSubPanel});
+
+    //listen for changes in indication for referral text box
+    var textArea = $("PhenoTips.PatientClass_0_indication_for_referral");
+    text = textArea.value;
+    fetchDismissedSuggestions(updateAnnotations);
+    textArea.observe('blur', function() {
+      if(textArea.value != text) {
+        text = textArea.value;
+        updateAnnotations();
+      }
+    });
+  }
+  
+  /**
+   * Queries server for annotations to the text, updates list of suggestions and
+   * displays suggestions in the UI.
+   */
+  function updateAnnotations() {
+    if(text) {
+      currentSuggestions = {};
+      var queryString = '?outputSyntax=plain';
+      new Ajax.Request(new XWiki.Document('AnnotationService', 'PhenoTips').getURL('get') + queryString,
+      {
+        parameters : {
+          text : text
+        },
+        onCreate : function() {
+          var loadingContainer = new Element('div', {'class' : 'loading-container'});
+          var spinner = new Element('div', {
+            'id' : 'suggestions-spinner',
+            'class' : "fa fa-lg fa-spinner fa-spin"});
+          var loadingLabel = new Element('div', {'id' : 'generating-suggestions-label'}).update("Generating Suggestions");
+          loadingContainer.insert(spinner).insert(loadingLabel);
+          widgetContainer.update(loadingContainer);
+        },
+        onSuccess : function(response) {
+          annotationServiceResults = response.responseJSON.response;
+          getExistingPhenotypes();
+          populateSuggestionData();
+        },
+        onComplete : function () {
+          popSuggestions(numSuggestionsToDisplay).forEach(function(suggestion) {
+            currentSuggestions[suggestion.id] = suggestion;
+          });
+          drawSuggestionsUI();
+        }
+      });
+    } else {
+      annotationServiceResults = {};
+      currentSuggestions = {};
+      populateSuggestionData();
+      drawSuggestionsUI();
+    }
+  };
+
+  /**
+   * Creates YesNoPicker element.
+   * 
+   * @param {Object} suggestion Annotation object with the fields: 'start', 'end', 'id' and 'label'.
+   * @param {Element} suggestionElt UI Element of one suggestion.
+   * @param {Element} categoryElt Hidden UI Element containing term categories.
+   */
+  function generateYesNoPicker(suggestion, suggestionElt, categoryElt) {
+    var phenotypePrefix = ($('prefix') &amp;&amp; $('prefix').value || '');
+    var yesNoPicker = YesNoPicker.generatePickerElement(
+      [
+        {type: 'yes', name: phenotypePrefix + 'phenotype'},
+        {type: 'no', name: phenotypePrefix + 'negative_phenotype'}
+      ],
+      suggestion.id,
+      suggestion.label,
+      true
+    );
+
+    var qsWidget = $('quick-phenotype-search');
+
+    if(qsWidget &amp;&amp; qsWidget._suggestPicker) {
+      yesNoPicker.select('.yes', '.no').invoke('observe', 'click', function(event) {
+        var option = Event.findElement(event);
+        var input = option.down('input[type="checkbox"]') || option.previous('.yes-no-picker').down('.yes input[type="checkbox"]'); // defaults to 'Y' when clicking on the text
+        if (!input) {return;}
+        if (input.checked) {
+          var negative = option.hasClassName('no');
+          var categoryClone = categoryElt.clone(true);
+          if (negative) {
+            categoryClone.insert(new Element('input', {type: 'hidden', name : 'fieldName', value : input.name}));
+          }
+          qsWidget._suggestPicker.silent = true;
+          qsWidget._suggestPicker.acceptSuggestion({'id' : suggestion.id, 'value' : suggestion.label, 'category' : categoryClone, 'negative' : negative});
+          qsWidget._suggestPicker.silent = false;
+          new XWiki.widgets.Notification("$services.localization.render('phenotips.PatientSheetCode.added')".replace("__name__", suggestion.id), 'done');
+          dismissSuggestion(suggestion.id, suggestionElt);
+        } else {
+          var existingValue = $(qsWidget.id + '_' + input.value);
+          if (existingValue) {
+            existingValue.checked = false;
+            new XWiki.widgets.Notification("$services.localization.render('phenotips.PatientSheetCode.removed')".replace("__name__", suggestion.id), 'done');
+          }
+        }
+      });
+    }
+    return yesNoPicker;
+  }
+
+  /**
+   * Creates one suggestion element, with a yes-no-picker, label, quote and info tooltip.
+   *
+   * @param {Object} suggestion Annotation object with the fields: 'start', 'end', 'id' and 'label'.
+   */
+  function generateSuggestionUIElement(suggestion) {
+    var start = suggestion.start;
+    var end = suggestion.end;
+    var quoteStart = Math.max(0, start - 22);
+    var quoteEnd = Math.min(end + 22, text.length)
+    var suggestionBox = new Element('div', {'class' : 'suggestion'});
+    var termCategories = new Element("span", {"class" : "hidden term-category"});
+    suggestion['term_category'].forEach(function(category) {
+      termCategories.insert(
+        new Element('input', {'type' : 'hidden', 'value' : category})
+      );
+    });
+    var yesNoPicker = generateYesNoPicker(suggestion, suggestionBox, termCategories);
+    var dismissButton = new Element('div', {'class' : 'hide-suggestion'}).update("✖");
+    dismissButton.observe('click', function() {
+      dismissSuggestion(suggestion.id, suggestionBox);
+    });
+    
+    return suggestionBox.insert(
+      new Element('div', {'class' : 'suggestion-headline'}).insert(
+          yesNoPicker
+        ).insert(
+          new Element("span", {"class" : "suggestion-term"}).update(suggestion.label)
+        ).insert(
+          termCategories
+        ).insert('&lt;span class="xHelpButton fa fa-info-circle phenotype-info" title="' + suggestion.id + '"&gt;&lt;/span&gt;')
+    ).insert(
+      new Element('div', {'class' : 'suggestion-quote'}).insert(
+        "..." + text.substring(quoteStart, start)
+      ).insert(
+        new Element('span', {'class' : 'quoted-term'}).update(text.substring(start, end))
+      ).insert(
+        text.substring(end, quoteEnd) + "..."
+      )
+    ).insert(
+      dismissButton
+    );
+  }
+
+  /**
+   * Queries server and updates list of previously dismissed or considered suggestions.
+   *
+   * @param {function} callback Will be invoked when the request is complete.
+   */
+  function fetchDismissedSuggestions(callback) {
+    new Ajax.Request(XWiki.currentDocument.getRestURL('objects/PhenoTips.DismissedSuggestionsClass/0/properties/terms'), {
+      'method': 'get',
+      'requestHeaders': {'Accept': 'application/json'},
+      onSuccess: function(response) {
+        dismissedTermsKeys = response.responseJSON.value.split('|');
+        dismissedTermsKeys.forEach(function(termId) {
+          dismissedTerms[termId] = true;
+        });
+        existsDismissedSuggestionDataStore = true;
+      },
+      onComplete: function(response) {
+        callback();
+      }
+    });
+  };
+
+  /**
+   * Add term with termId to list of dismissed suggestions and update the dismissed
+   * suggestions on the server.
+   *
+   * @param {string} termId Ontology ID of the phenotype term.
+   * @param {Element} suggestionElt UI Element of one suggestion.
+   */
+  function dismissSuggestion(termId, suggestionElt) {
+    dismissedTerms[termId] = true;
+    var parameters = {
+      'ajax': true,
+      'form_token': $$("meta[name='form_token']")[0].content
+    };
+    var delimitedDismissedTerms = Object.keys(dismissedTerms).join('|');
+    if (existsDismissedSuggestionDataStore) {
+      parameters['PhenoTips.DismissedSuggestionsClass_0_terms'] = delimitedDismissedTerms;
+    } else {
+      parameters['classname'] = 'PhenoTips.DismissedSuggestionsClass';
+      parameters['PhenoTips.DismissedSuggestionsClass_terms'] = delimitedDismissedTerms;
+    }
+    new Ajax.Request(XWiki.currentDocument.getURL((existsDismissedSuggestionDataStore ? 'save' : 'objectadd')), {
+      'parameters': parameters,
+      onSuccess : function() {
+        existsDismissedSuggestionDataStore = true;
+      }
+    });
+    var nextSuggestion = popNextSuggestion();
+    delete currentSuggestions[termId];
+
+    if(nextSuggestion) {
+      currentSuggestions[nextSuggestion.id] = nextSuggestion;
+      suggestionElt.replace(generateSuggestionUIElement(nextSuggestion));
+      Event.fire(document, 'xwiki:dom:updated', {'elements' : [suggestionElt]});
+    } else {
+      suggestionElt.remove();
+    }
+    updateSuggestionCount();
+  };
+
+  /**
+   * Returns a list of phenotypes already added for this patient.
+   */
+  function getExistingPhenotypes() {
+    listedTerms = {};
+    $$(".yes-no-picker").each(function(element) {
+      var yesInput = element.down('.yes input');
+      var noInput = element.down('.no input');
+      if (yesInput.name === noInput.name) {
+        // Not a phenotype
+        return;
+      }
+      var key = yesInput.value;
+      var existing = listedTerms[key];
+      var enable = element.down('.na input') &amp;&amp; !element.down('.na input').checked;
+      if (!enable) {
+        // not listed phenotype
+        return;
+      }
+      if (!existing) {
+        listedTerms[key] = true;
+      }
+    });
+    return listedTerms;
+  };
+
+  /**
+   * Generates suggestion list from annotations, but filtering out
+   * dismissed and existing phenotypes.
+   */
+  function populateSuggestionData() {
+    suggestionBank = [];
+    var listedTerms = getExistingPhenotypes();
+    Object.keys(annotationServiceResults).forEach(function(termId) {
+      if (!listedTerms[termId] &amp;&amp; !dismissedTerms[termId]) {
+        suggestionBank.push(annotationServiceResults[termId]);
+      }
+    });
+  };
+
+  /**
+   * Removes the next numSuggestions of suggestions from suggestionBank and returns them.
+   * @param {Number} numSuggestions The number of suggestions to remove.
+   */
+  function popSuggestions(numSuggestions) {
+    var suggestionsToDisplay = [];
+    var limit = Math.min(numSuggestions, suggestionBank.length);
+    for (var i = 0; i &lt; limit; i++) {
+      suggestionsToDisplay.push(suggestionBank.shift());
+    }
+    return suggestionsToDisplay;
+  };
+
+  /**
+   * Removes the next suggestion from suggestionBank and returns it.
+   */
+  function popNextSuggestion() {
+    var suggestionList = popSuggestions(1);
+    if (suggestionList.length != 1) {
+      return null;
+    }
+    return suggestionList[0];
+  }
+
+  /**
+   * Clears the UI and draws all the elements.
+   */
+  function drawSuggestionsUI() {
+    var suggestionsContainer = new Element('div', {'id' : 'suggestions-container'});
+    widgetContainer.update(suggestionsContainer);
+    //scrap what exists, create UI from 4 first elements in suggestions
+    var suggestionBoxes = [];
+    Object.keys(currentSuggestions).forEach(function(termId) {
+      suggestionBoxes.push(generateSuggestionUIElement(currentSuggestions[termId]));
+    });
+
+    //draw suggestion boxes
+    var suggestionList = new Element('ul', {"class" : "suggestions-list"});
+      suggestionBoxes.forEach(function(suggestion) {
+        suggestionList.insert(
+          new Element('li', {"class" : "suggestion-list-item"}).insert(suggestion)
+        )
+    });
+    suggestionsContainer.update(suggestionList);
+    Event.fire(document, 'xwiki:dom:updated', {'elements' : [suggestionsContainer]});
+
+    //show progress counter
+    widgetContainer.insert(new Element("div", {"id" : "suggestion-count"}));
+    updateSuggestionCount();
+  };
+
+  /**
+   * Updates the UI element that shows the progress of going through suggestions.
+   */
+  function updateSuggestionCount() {
+    var numCurrentSuggestions = Object.keys(currentSuggestions).length;
+    var numTotalSuggestions = numCurrentSuggestions + suggestionBank.length;
+    if(numTotalSuggestions &gt; 0) {
+      $("suggestion-count").update(numCurrentSuggestions + " of " + numTotalSuggestions + " suggestions");
+    } else {
+      $("suggestion-count").update("No suggestions to display");
+    }
+  }
+});</code>
     </property>
     <property>
-      <name></name>
+      <name/>
     </property>
     <property>
-      <parse />
+      <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
     </property>
   </object>
   <object>
@@ -161,13 +508,13 @@ $$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</co
     <guid>8468027f-2638-489a-a4b8-d8a909d851f2</guid>
     <class>
       <name>XWiki.StyleSheetExtension</name>
-      <customClass />
-      <customMapping />
-      <defaultViewSheet />
-      <defaultEditSheet />
-      <defaultWeb />
-      <nameField />
-      <validationScript />
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
       <cache>
         <cache>0</cache>
         <disabled>0</disabled>
@@ -234,43 +581,77 @@ $$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</co
       <cache>forbid</cache>
     </property>
     <property>
-      <code>#suggestions-container {&#xd;
-  -webkit-column-count: 3; /* Chrome, Safari, Opera */&#xd;
-  -moz-column-count: 3; /* Firefox */&#xd;
-  column-count: 3;&#xd;
-  padding-top: 1.7em;  &#xd;
-}&#xd;
-&#xd;
-#suggestions-container .suggestion {&#xd;
-  margin: 0 1.0em 1.7em;&#xd;
-  position: relative;&#xd;
-  break-inside: avoid-column;&#xd;
-}&#xd;
-&#xd;
-#suggestions-container .suggestion-term {&#xd;
-  font-weight: bold;&#xd;
-}&#xd;
-&#xd;
-#suggestions-container .suggestion-quote {&#xd;
-  margin-top: .4em;&#xd;
-}&#xd;
-&#xd;
-#suggestions-container .quoted-term {&#xd;
-  background-color: yellow;&#xd;
-}&#xd;
-&#xd;
-#suggestions-container .hide-suggestion {&#xd;
-  position: absolute;&#xd;
-  top: 0;&#xd;
-  right: 0;&#xd;
-  cursor: pointer;&#xd;
+      <code>.loading-container {
+  text-align: center;
+  margin: 1em;
+}
+
+.loading-container #generating-suggestions-label {
+  margin: 1em;
+}
+
+#suggestions-container {
+  padding-top: 0.8em;
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2; /* Firefox */
+  column-count: 2;
+}
+#suggestions-container .suggestions-list {
+  margin: 0 2em 0 2em;
+}
+
+#suggestions-container .suggestion-list-item {
+  list-style-type: none;
+}
+
+#suggestions-container .suggestion {
+  margin: 0 1.0em 1.7em;
+  position: relative;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  -o-column-break-inside: avoid;
+  column-break-inside: avoid;
+  display: table;
+  width: 17.5em;
+  height: 5em;
+}
+
+#suggestions-container .yes-no-picker {
+margin: 0;
+}
+
+#suggestions-container .suggestion-term {
+  font-weight: bold;
+  margin: 0 .4em;
+}
+
+#suggestions-container .suggestion-quote {
+  margin-top: .4em;
+  font-style: italic;
+}
+
+#suggestions-container .quoted-term {
+  background-color: yellow;
+  font-style: normal;
+}
+
+#suggestions-container .hide-suggestion {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+#suggestion-count {
+  text-align: center;
+  margin-bottom: 1em;
 }</code>
     </property>
     <property>
-      <name></name>
+      <name/>
     </property>
     <property>
-      <parse />
+      <parse/>
     </property>
     <property>
       <use>currentPage</use>
@@ -283,13 +664,13 @@ $$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</co
     <guid>a8efe7b6-6399-436e-8f71-a27dce8382a0</guid>
     <class>
       <name>XWiki.UIExtensionClass</name>
-      <customClass />
-      <customMapping />
-      <defaultViewSheet />
-      <defaultEditSheet />
-      <defaultWeb />
-      <nameField />
-      <validationScript />
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
       <content>
         <disabled>0</disabled>
         <name>content</name>
@@ -346,8 +727,8 @@ $$(".current-phenotype-selection")[0].insert({top : clinicalNotesSubPanel});</co
       </scope>
     </class>
     <property>
-      <content>{{velocity}}&#xd;
-$xwiki.ssx.use('PhenoTips.Clinical Notes Annotation', {'colorTheme' : "$xwiki.getSpacePreference('colorTheme')"})##&#xd;
+      <content>{{velocity}}
+$xwiki.ssx.use('PhenoTips.Clinical Notes Annotation', {'colorTheme' : "$xwiki.getSpacePreference('colorTheme')"})##
 $xwiki.jsx.use('PhenoTips.Clinical Notes Annotation')##</content>
     </property>
     <property>
@@ -357,10 +738,10 @@ $xwiki.jsx.use('PhenoTips.Clinical Notes Annotation')##</content>
       <name>org.phenotips.patientSheet.field.phenotype-suggestion</name>
     </property>
     <property>
-      <parameters>title=Phenotype Suggestions Extracted from Clinical Notes&#xd;
-enabled=true&#xd;
-required=&#xd;
-order=2&#xd;
+      <parameters>title=Phenotype Suggestions Extracted from Clinical Notes
+enabled=true
+required=
+order=2
 fields=</parameters>
     </property>
     <property>
