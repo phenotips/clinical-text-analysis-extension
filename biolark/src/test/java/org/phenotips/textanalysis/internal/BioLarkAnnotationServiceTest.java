@@ -17,7 +17,6 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import com.sun.xml.internal.fastinfoset.vocab.Vocabulary;
 import org.phenotips.vocabulary.VocabularyManager;
 import org.phenotips.vocabulary.VocabularyTerm;
 import org.phenotips.textanalysis.TermAnnotation;
@@ -90,10 +89,10 @@ public class BioLarkAnnotationServiceTest
         when(biolark.annotatePlain(eq(text), anyBoolean())).thenReturn(biolarkResult);
 
         // Mock Ontology Manager
-        VocabularyManager ontologyManager = this.mocker.getInstance(VocabularyManager.class);
+        VocabularyManager vocabularyManager = this.mocker.getInstance(VocabularyManager.class);
         VocabularyTerm t = mock(VocabularyTerm.class);
         when(t.getId()).thenReturn(termId);
-        when(ontologyManager.resolveTerm("blue:eyes")).thenReturn(t);
+        when(vocabularyManager.resolveTerm("blue:eyes")).thenReturn(t);
 
         List<TermAnnotation> expected = new LinkedList<TermAnnotation>();
         expected.add(new TermAnnotation(start, end, t));
