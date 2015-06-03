@@ -17,12 +17,15 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.phenotips.ontology.OntologyManager;
-import org.phenotips.ontology.OntologyTerm;
+import com.sun.xml.internal.fastinfoset.vocab.Vocabulary;
+import org.phenotips.vocabulary.VocabularyManager;
+import org.phenotips.vocabulary.VocabularyTerm;
 import org.phenotips.textanalysis.TermAnnotation;
 import org.phenotips.textanalysis.TermAnnotationService;
 import org.phenotips.textanalysis.TermAnnotationService.AnnotationException;
 
+import org.phenotips.vocabulary.VocabularyManager;
+import org.phenotips.vocabulary.VocabularyTerm;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -87,8 +90,8 @@ public class BioLarkAnnotationServiceTest
         when(biolark.annotatePlain(eq(text), anyBoolean())).thenReturn(biolarkResult);
 
         // Mock Ontology Manager
-        OntologyManager ontologyManager = this.mocker.getInstance(OntologyManager.class);
-        OntologyTerm t = mock(OntologyTerm.class);
+        VocabularyManager ontologyManager = this.mocker.getInstance(VocabularyManager.class);
+        VocabularyTerm t = mock(VocabularyTerm.class);
         when(t.getId()).thenReturn(termId);
         when(ontologyManager.resolveTerm("blue:eyes")).thenReturn(t);
 

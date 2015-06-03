@@ -17,8 +17,8 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.phenotips.ontology.OntologyManager;
-import org.phenotips.ontology.OntologyTerm;
+import org.phenotips.vocabulary.VocabularyManager;
+import org.phenotips.vocabulary.VocabularyTerm;
 import org.phenotips.textanalysis.TermAnnotation;
 import org.phenotips.textanalysis.TermAnnotationService;
 
@@ -50,7 +50,7 @@ public class BioLarkAnnotationService implements TermAnnotationService
      * Ontology used to look up Phenotype term Ids.
      */
     @Inject
-    private OntologyManager ontologies;
+    private VocabularyManager vocabularies;
 
     /**
      * Biolark annotation component.
@@ -71,7 +71,7 @@ public class BioLarkAnnotationService implements TermAnnotationService
         for (final Annotation biolarkAnnotation : biolarkAnnotations) {
             final String termId = FilenameUtils.getBaseName(
                 biolarkAnnotation.getUri()).replace('_', ':');
-            final OntologyTerm term = this.ontologies.resolveTerm(termId);
+            final VocabularyTerm term = this.vocabularies.resolveTerm(termId);
             if (term != null) {
                 final long start = biolarkAnnotation.getStartOffset();
                 final long end = biolarkAnnotation.getEndOffset();

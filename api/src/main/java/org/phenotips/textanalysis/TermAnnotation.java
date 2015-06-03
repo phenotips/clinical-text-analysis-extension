@@ -17,7 +17,7 @@
  */
 package org.phenotips.textanalysis;
 
-import org.phenotips.ontology.OntologyTerm;
+import org.phenotips.vocabulary.VocabularyTerm;
 
 /**
  * Contains information about a recognized phenotype from text.
@@ -31,7 +31,7 @@ public class TermAnnotation
 
     private final long mEndPos;
 
-    private final OntologyTerm mTerm;
+    private final VocabularyTerm mTerm;
 
     /**
      * Constructs an annotation for a an ontology term using it's start and end positions within the text.
@@ -40,7 +40,7 @@ public class TermAnnotation
      * @param end position in text where the the ontology term occurance ends
      * @param term the ontology term found in the text
      */
-    public TermAnnotation(long start, long end, OntologyTerm term)
+    public TermAnnotation(long start, long end, VocabularyTerm term)
     {
         this.mStartPos = start;
         this.mEndPos = end;
@@ -66,7 +66,7 @@ public class TermAnnotation
     /**
      * @return the ontology term found in the text
      */
-    public OntologyTerm getTerm()
+    public VocabularyTerm getTerm()
     {
         return this.mTerm;
     }
