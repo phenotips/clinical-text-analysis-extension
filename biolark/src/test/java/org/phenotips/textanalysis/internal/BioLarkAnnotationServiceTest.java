@@ -17,11 +17,11 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.phenotips.vocabulary.VocabularyManager;
-import org.phenotips.vocabulary.VocabularyTerm;
 import org.phenotips.textanalysis.TermAnnotation;
 import org.phenotips.textanalysis.TermAnnotationService;
 import org.phenotips.textanalysis.TermAnnotationService.AnnotationException;
+import org.phenotips.vocabulary.VocabularyManager;
+import org.phenotips.vocabulary.VocabularyTerm;
 
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
@@ -119,5 +119,4 @@ public class BioLarkAnnotationServiceTest
 
         assertEquals(expectedAnnotations, this.client.annotate(text));
     }
-
 }

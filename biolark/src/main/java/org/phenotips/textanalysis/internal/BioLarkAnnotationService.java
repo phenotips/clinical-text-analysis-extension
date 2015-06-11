@@ -17,10 +17,10 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.phenotips.vocabulary.VocabularyManager;
-import org.phenotips.vocabulary.VocabularyTerm;
 import org.phenotips.textanalysis.TermAnnotation;
 import org.phenotips.textanalysis.TermAnnotationService;
+import org.phenotips.vocabulary.VocabularyManager;
+import org.phenotips.vocabulary.VocabularyTerm;
 
 import org.xwiki.component.annotation.Component;
 
@@ -59,18 +59,16 @@ public class BioLarkAnnotationService implements TermAnnotationService
     private BiolarkWrapper biolark;
 
     @Override
-    public List<TermAnnotation> annotate(String text)
-        throws AnnotationException
+    public List<TermAnnotation> annotate(String text) throws AnnotationException
     {
         final List<Annotation> biolarkAnnotations =
             this.biolark.annotatePlain(text, false);
         final List<TermAnnotation> finalAnnotations =
             new LinkedList<TermAnnotation>();
 
-        // Resolve each termID against Phenotype ontology
+        // Resolve each termID against the ontology
         for (final Annotation biolarkAnnotation : biolarkAnnotations) {
-            final String termId = FilenameUtils.getBaseName(
-                biolarkAnnotation.getUri()).replace('_', ':');
+            final String termId = FilenameUtils.getBaseName(biolarkAnnotation.getUri()).replace('_', ':');
             final VocabularyTerm term = this.vocabularies.resolveTerm(termId);
             if (term != null) {
                 final long start = biolarkAnnotation.getStartOffset();
