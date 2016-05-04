@@ -27,6 +27,8 @@ import java.util.Locale;
 /**
  * Takes in lists of term annotations, as well as the text they appear in and
  * assigns sentences to them from the text.
+ *
+ * @version $Id$
  */
 public class TermAnnotationSentenceDetector
 {
@@ -45,7 +47,9 @@ public class TermAnnotationSentenceDetector
         while (currentSentence != BreakIterator.DONE && currentAnnotation < annotations.size()) {
             TermAnnotation annotation = annotations.get(currentAnnotation);
             int nextSentence = sentences.next();
+            /* next() pushes the iterator forward, so bring it back */
             sentences.previous();
+            /* Does this annotation fall within the current sentence? */
             if (annotation.getStartPos() >= currentSentence && annotation.getStartPos() < nextSentence) {
                 long start = annotation.getStartPos() - currentSentence;
                 long end = annotation.getEndPos() - currentSentence;
