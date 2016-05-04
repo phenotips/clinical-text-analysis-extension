@@ -42,6 +42,7 @@
     <module>ui</module>
     <module>pageobjects</module>
     <module>scigraph-service</module>
+    <module>ctakes-service</module>
     <module>generic-rest</module>
   </modules>
 

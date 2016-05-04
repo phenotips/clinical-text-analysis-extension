@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+-->
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+    <primitive>false</primitive>
+    <delegateAnalysisEngineSpecifiers>
+        <delegateAnalysisEngine key="SimpleSegmentAnnotator">
+            <import location="SimpleSegmentAnnotator.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="Chunker">
+            <import location="Chunker.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="SentenceDetectorAnnotator">
+            <import location="SentenceDetectorAnnotator.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="TokenizerAnnotator">
+            <import location="TokenizerAnnotator.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="POSTagger">
+            <import location="POSTagger.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="AdjustNounPhraseToIncludeFollowingNP">
+            <import location="AdjustNounPhraseToIncludeFollowingNP.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="AdjustNounPhraseToIncludeFollowingPPNP">
+            <import location="AdjustNounPhraseToIncludeFollowingPPNP.xml" />
+        </delegateAnalysisEngine>
+        <!-- The LVG is recommended but causes tons of problems because it depends
+             on a different version of hsql, plus requires a db to be populated and
+             connected to and so on -->
+        <!--<delegateAnalysisEngine key="LvgAnnotator">
+            <import location="LvgAnnotator.xml" />
+        </delegateAnalysisEngine>-->
+        <delegateAnalysisEngine key="ContextDependentTokenizerAnnotator">
+            <import location="ContextDependentTokenizerAnnotator.xml" />
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="DictionaryLookupAnnotator">
+            <import location="DictionaryLookupAnnotator.xml" />
+        </delegateAnalysisEngine>
+    </delegateAnalysisEngineSpecifiers>
+    <analysisEngineMetaData>
+        <name>AggregatePlaintextProcessor</name>
+        <description>Runs the complete pipeline for annotating clinical
+            documents in plain text format.
+            Includes adjusting NP chunks to include NP NP and NP PP NP.
+        </description>
+        <version></version>
+        <vendor></vendor>
+        <configurationParameters searchStrategy="language_fallback">
+            <configurationParameter>
+                <name>SegmentID</name>
+                <description></description>
+                <type>String</type>
+                <multiValued>false</multiValued>
+                <mandatory>false</mandatory>
+                <overrides>
+                    <parameter>SimpleSegmentAnnotator/SegmentID</parameter>
+                </overrides>
+            </configurationParameter>
+            <configurationParameter>
+                <name>ChunkCreatorClass</name>
+                <type>String</type>
+                <multiValued>false</multiValued>
+                <mandatory>true</mandatory>
+                <overrides>
+                    <parameter>Chunker/ChunkCreatorClass</parameter>
+                </overrides>
+            </configurationParameter>
+        </configurationParameters>
+        <configurationParameterSettings>
+            <nameValuePair>
+                <name>ChunkCreatorClass</name>
+                <value>
+                    <string>org.apache.ctakes.chunker.ae.PhraseTypeChunkCreator
+                    </string>
+                </value>
+            </nameValuePair>
+        </configurationParameterSettings>
+        <flowConstraints>
+            <fixedFlow>
+                <node>SimpleSegmentAnnotator</node>
+                <node>SentenceDetectorAnnotator</node>
+                <node>TokenizerAnnotator</node>
+                <!--<node>LvgAnnotator</node>-->
+                <!--<node>ContextDependentTokenizerAnnotator</node>
+                <node>POSTagger</node>
+                <node>Chunker</node>
+                <node>AdjustNounPhraseToIncludeFollowingNP</node>
+                <node>AdjustNounPhraseToIncludeFollowingPPNP</node>-->
+                <node>DictionaryLookupAnnotator</node>
+            </fixedFlow>
+        </flowConstraints>
+        <typePriorities>
+            <name>Ordering</name>
+            <description>For subiterator</description>
+            <version>1.0</version>
+            <priorityList>
+                <type>org.apache.ctakes.typesystem.type.textspan.Segment</type>
+                <type>org.apache.ctakes.typesystem.type.textspan.Sentence</type>
+                <type>org.apache.ctakes.typesystem.type.syntax.BaseToken</type>
+            </priorityList>
+            <priorityList>
+                <type>org.apache.ctakes.typesystem.type.textspan.Sentence</type>
+                <type>org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation
+                </type>
+            </priorityList>
+        </typePriorities>
+        <fsIndexCollection />
+        <capabilities>
+            <capability>
+                <inputs />
+                <outputs>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.EntityMention</type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.NewlineToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.WordToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.VP
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.refsem.UmlsConcept
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.UCP
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.TimeAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.SymbolToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textspan.Sentence
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textspanSegment
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.SBAR
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.RomanNumeralAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.RangeAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.PunctuationToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.Property
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.Properties
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.PersonTitleAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.PRT
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.PP
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.OntologyConcept
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.NumToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.MeasurementAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.Lemma
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.LST
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.INTJ
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.FractionAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.structured.DocumentID
+                    </type>
+                    <type allAnnotatorFeatures="true">uima.tcas.DocumentAnnotation</type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.DateAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.CopySrcAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.CopyDestAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.ContractionToken
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.ContextAnnotation
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.Chunk
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.CONJP
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.BaseToken
+                    </type>
+                    <type allAnnotatorFeatures="true">uima.cas.AnnotationBase</type>
+                    <type allAnnotatorFeatures="true">uima.tcas.Annotation</type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.ADVP
+                    </type>
+                    <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.ADJP
+                    </type>
+                </outputs>
+                <languagesSupported />
+            </capability>
+        </capabilities>
+        <operationalProperties>
+            <modifiesCas>true</modifiesCas>
+            <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+            <outputsNewCASes>false</outputsNewCASes>
+        </operationalProperties>
+    </analysisEngineMetaData>
+    <resourceManagerConfiguration />
+</analysisEngineDescription>
