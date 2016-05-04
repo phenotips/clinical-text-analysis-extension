@@ -57,7 +57,7 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
     /**
      * The default URL of the annotation service.
      */
-    private static final String DEFAULT_BASE_URL = "http://localhost:8080/scigraph/scigraph/";
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/ctakes/";
 
     /**
      * The config key for the annotations service url.
