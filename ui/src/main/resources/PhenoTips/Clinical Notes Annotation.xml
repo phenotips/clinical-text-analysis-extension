@@ -285,12 +285,13 @@
    * @param {Object} suggestion Annotation object with the fields: 'start', 'end', 'id' and 'label'.
    */
   function generateSuggestionUIElement(suggestion) {
-    var start = suggestion.start;
-    var end = suggestion.end;
-    var quoteStart = Math.max(0, start - 22);
-    var quoteEnd = Math.min(end + 22, text.length)
+    var start = suggestion.startInSentence;
+    var end = suggestion.endInSentence;
+    var quoteStart = 0;
+    var quoteEnd = text.length;
     var suggestionBox = new Element('div', {'class' : 'suggestion'});
     var termCategories = new Element("span", {"class" : "hidden term-category"});
+    var sentence = suggestion.sentence;
     suggestion['term_category'].forEach(function(category) {
       termCategories.insert(
         new Element('input', {'type' : 'hidden', 'value' : category})
@@ -312,11 +313,11 @@
         ).insert('&lt;span class="xHelpButton fa fa-info-circle phenotype-info" title="' + suggestion.id + '"&gt;&lt;/span&gt;')
     ).insert(
       new Element('div', {'class' : 'suggestion-quote'}).insert(
-        "..." + text.substring(quoteStart, start)
+        "..." + sentence.substring(quoteStart, start)
       ).insert(
-        new Element('span', {'class' : 'quoted-term'}).update(text.substring(start, end))
+        new Element('span', {'class' : 'quoted-term'}).update(sentence.substring(start, end))
       ).insert(
-        text.substring(end, quoteEnd) + "..."
+        sentence.substring(end, quoteEnd) + "..."
       )
     ).insert(
       dismissButton
