@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.phenotips</groupId>
     <artifactId>clinical-text-analysis-extension</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <artifactId>clinical-text-analysis-extension-ui</artifactId>
   <name>PhenoTips - Clinical Text Analysis - User Interface Components</name>
@@ -38,10 +38,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>clinical-text-analysis-extension-biolark</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>clinical-text-analysis-extension-generic-rest</artifactId>
+        <version>${project.version}</version>
+        <scope>runtime</scope>
     </dependency>
   </dependencies>
 

@@ -33,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 
 public class TermAnnotationSentenceDetectorTest
 {
-
     private TermAnnotationSentenceDetector client;
 
     /* This is where you miss heredocs. */
@@ -64,6 +63,9 @@ public class TermAnnotationSentenceDetectorTest
         SENTENCE3 = TEXT.substring(343);
     }
 
+    /**
+     * Test that we're able to have one annotation per sentence.
+     */
     @Test
     public void testBasic()
     {

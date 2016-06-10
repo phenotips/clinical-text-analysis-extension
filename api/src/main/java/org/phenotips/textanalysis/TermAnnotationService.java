@@ -45,7 +45,7 @@ public interface TermAnnotationService
      * @version $Id$
      * @since 1.0M1
      */
-    public class AnnotationException extends Exception
+    class AnnotationException extends Exception
     {
         /**
          * Constructs a new AnnotationException with the specified detail message.
@@ -55,6 +55,17 @@ public interface TermAnnotationService
         public AnnotationException(String message)
         {
             super(message);
+        }
+
+        /**
+         * Constructs a new AnnotationException with the specified detail message and cause.
+         *
+         * @param message the detail message
+         * @param cause the cause
+         */
+        public AnnotationException(String message, Exception cause)
+        {
+            super(message, cause);
         }
     }
 }

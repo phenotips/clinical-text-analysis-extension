@@ -33,10 +33,19 @@ public class TermAnnotation implements Comparable<TermAnnotation>
 
     private final VocabularyTerm mTerm;
 
+    /**
+     * The sentence this term annotation appears in.
+     */
     private String sentence;
 
+    /**
+     * The start of this annotation within the sentence.
+     */
     private long startInSentence;
 
+    /**
+     * The end of this annotation within the sentence.
+     */
     private long endInSentence;
 
     /**
