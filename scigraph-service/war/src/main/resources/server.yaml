@@ -1,0 +1,34 @@
+server:
+  type: bridge
+  applicationContextPath: /scigraph
+  adminContextPath: /admin
+
+logging:
+  level: INFO
+
+graphConfiguration:
+  location: ./hpo
+  curies:
+    hpo: 'http://purl.obolibrary.org/obo/'
+    oboInOwl: 'http://www.geneontology.org/formats/oboInOwl#'
+  indexedNodeProperties:
+    - category
+    - label
+    - fragment
+    - synonym
+    - comment
+  exactNodeProperties:
+    - label
+    - synonym
+
+serviceMetadata:
+  name: 'HPO'
+  view: {
+    url: 'http://localhost:9000/scigraph/refine/view/{{id}}'
+  }
+  preview: {
+    url: 'http://localhost:9000/scigraph/refine/preview/{{id}}',
+    width: 400,
+    height: 400
+  }
+

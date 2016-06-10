@@ -22,36 +22,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.phenotips</groupId>
-    <artifactId>phenotips-components</artifactId>
-    <version>1.3</version>
-    <relativePath />
+    <artifactId>clinical-text-analysis-extension</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>clinical-text-analysis-extension</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>scigraph-service</artifactId>
   <packaging>pom</packaging>
-  <name>PhenoTips - Clinical Text Analysis</name>
-
-  <properties>
-    <!-- Disable Clirr since this is the first version -->
-    <clirr.skip>true</clirr.skip>
-  </properties>
+  <name>Scigraph standalone war parent</name>
 
   <modules>
-    <module>api</module>
-    <module>biolark</module>
-    <module>ui</module>
-    <module>pageobjects</module>
-    <module>ctakes-service</module>
-    <module>scigraph-service</module>
-    <module>generic-rest</module>
+    <module>war</module>
   </modules>
-
-  <profiles>
-    <profile>
-      <id>functional-tests</id>
-      <modules>
-        <module>tests</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>
+
