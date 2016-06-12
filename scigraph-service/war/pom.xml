@@ -49,19 +49,19 @@
     <dependency>
       <groupId>io.scigraph</groupId>
       <artifactId>scigraph-core</artifactId>
-      <version>1.5-alpha-1</version>
+      <version>1.5-alpha-2</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>io.scigraph</groupId>
       <artifactId>scigraph-entity</artifactId>
-      <version>1.5-alpha-1</version>
+      <version>1.5-alpha-2</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>io.scigraph</groupId>
       <artifactId>scigraph-services</artifactId>
-      <version>1.5-alpha-1</version>
+      <version>1.5-alpha-2</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
