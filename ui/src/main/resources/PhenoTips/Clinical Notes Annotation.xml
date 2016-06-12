@@ -152,6 +152,11 @@ var currentSuggestions = {};
 var existsDismissedSuggestionDataStore = false;
 
 /**
+ * The index of the first suggestion being displayed at the moment.
+ */
+var currentFirstSuggestion = 0;
+
+/**
  * Number of suggestions to display in the UI
  */
 var numSuggestionsToDisplay = 4;
@@ -166,6 +171,20 @@ var text = "";
  */
 var widgetContainer = new Element('div', {"id" : 'annotation-widget-container'});
 
+/**
+ * A refresh button.
+ */
+var refreshButton = new Element('span', {"id" : 'annotation-refresh', "class" : 'fa fa-refresh xHelpButton', 'aria-hidden': 'true'});
+
+refreshButton.observe('click', function() {
+  dismissedTerms = {};
+  annotationServiceResults = {};
+  suggestionBank = [];
+  currentSuggestions = {};
+  persistDismissed();
+  updateAnnotations();
+});
+
 //generate initial UI elements
 var panel = $$(".current-phenotype-selection")[0];
 if(panel) {
@@ -173,20 +192,40 @@ if(panel) {
     new Element('div', {"class" : "sub-panel"}).insert(
       new Element('h3', {"class" : "wikigeneratedheader"}).update(
         "&lt;span&gt;&lt;strong&gt;Suggestions from Clinical Notes&lt;/strong&gt;&lt;/span&gt;"
-      ) 
+      ).insert(refreshButton)
     ).insert(widgetContainer);
   panel.insert({top : clinicalNotesSubPanel});
 
   //listen for changes in indication for referral text box
-  var textArea = $("PhenoTips.PatientClass_0_indication_for_referral");
-  text = textArea.value;
+  var referalIndication = $("PhenoTips.PatientClass_0_indication_for_referral");
+  var medicalHistory = $("PhenoTips.PatientClass_0_medical_history");
+  text = referalIndication.value + "\n" + medicalHistory.value;
   fetchDismissedSuggestions(updateAnnotations);
-  textArea.observe('blur', function() {
-    if(textArea.value != text) {
-      text = textArea.value;
+  referalIndication.observe('blur', function() {
+    if(!text.startsWith(referalIndication.value)) {
+      text = referalIndication.value + "\n" + medicalHistory.value;
       updateAnnotations();
     }
   });
+  medicalHistory.observe('blur', function() {
+    if(!text.endsWith(medicalHistory.value)) {
+      text = referalIndication.value + "\n" + medicalHistory.value;
+      updateAnnotations();
+    }
+  });
+}
+
+/**
+ * Update the currentSuggestions dictionary, populating it with suggestions from the suggestion
+ * bank, then redrawing the UI
+ */
+function updateCurrentSuggestions() {
+  currentSuggestions = {};
+  var end = currentFirstSuggestion + numSuggestionsToDisplay;
+  suggestionBank.slice(currentFirstSuggestion, end).forEach(function(suggestion, idx) {
+    currentSuggestions[suggestion.id] = idx + currentFirstSuggestion;
+  });
+  drawSuggestionsUI();
 }
 
 /**
@@ -194,6 +233,10 @@ if(panel) {
  * displays suggestions in the UI.
  */
 function updateAnnotations() {
+  /* This (resetting the currentFirstSuggestion) is gonna be a bit annoying if a user has advanced
+   * some pages and then revises the text box, but unfortunately it's really the only way to be
+   * sure we're not gonna paginate past the end. */
+  currentFirstSuggestion = 0;
   if(text) {
     currentSuggestions = {};
     var queryString = '?outputSyntax=plain';
@@ -216,12 +259,7 @@ function updateAnnotations() {
         getExistingPhenotypes();
         populateSuggestionData();
       },
-      onComplete : function () {
-        popSuggestions(numSuggestionsToDisplay).forEach(function(suggestion) {
-          currentSuggestions[suggestion.id] = suggestion;
-        });
-        drawSuggestionsUI();
-      }
+      onComplete : updateCurrentSuggestions
     });
   } else {
     annotationServiceResults = {};
@@ -285,7 +323,8 @@ function generateYesNoPicker(suggestion, suggestionElt, categoryElt) {
  *
  * @param {Object} suggestion Annotation object with the fields: 'start', 'end', 'id' and 'label'.
  */
-function generateSuggestionUIElement(suggestion) {
+function generateSuggestionUIElement(suggestionIdx) {
+  var suggestion = suggestionBank[suggestionIdx];
   var start = suggestion.startInSentence;
   var end = suggestion.endInSentence;
   var quoteStart = 0;
@@ -348,19 +387,14 @@ function fetchDismissedSuggestions(callback) {
 };
 
 /**
- * Add term with termId to list of dismissed suggestions and update the dismissed
- * suggestions on the server.
- *
- * @param {string} termId Ontology ID of the phenotype term.
- * @param {Element} suggestionElt UI Element of one suggestion.
+ * Send the list of dismissed suggestions to the server so they're remembered.
  */
-function dismissSuggestion(termId, suggestionElt) {
-  dismissedTerms[termId] = true;
+function persistDismissed() {
+  var delimitedDismissedTerms = Object.keys(dismissedTerms).join('|');
   var parameters = {
     'ajax': true,
     'form_token': $$("meta[name='form_token']")[0].content
   };
-  var delimitedDismissedTerms = Object.keys(dismissedTerms).join('|');
   if (existsDismissedSuggestionDataStore) {
     parameters['PhenoTips.DismissedSuggestionsClass_0_terms'] = delimitedDismissedTerms;
   } else {
@@ -373,12 +407,33 @@ function dismissSuggestion(termId, suggestionElt) {
       existsDismissedSuggestionDataStore = true;
     }
   });
-  var nextSuggestion = popNextSuggestion();
-  delete currentSuggestions[termId];
+}
 
-  if(nextSuggestion) {
-    currentSuggestions[nextSuggestion.id] = nextSuggestion;
-    suggestionElt.replace(generateSuggestionUIElement(nextSuggestion));
+/**
+ * Add term with termId to list of dismissed suggestions and update the dismissed
+ * suggestions on the server.
+ *
+ * @param {string} termId Ontology ID of the phenotype term.
+ * @param {Element} suggestionElt UI Element of one suggestion.
+ */
+function dismissSuggestion(termId, suggestionElt) {
+  dismissedTerms[termId] = true;
+  persistDismissed();
+  //var nextSuggestion = popNextSuggestion();
+  var deletedIdx = currentSuggestions[termId];
+  delete currentSuggestions[termId];
+  suggestionBank.splice(deletedIdx, 1);
+  Object.keys(currentSuggestions).forEach(function(key) {
+    if (currentSuggestions[key] > deletedIdx) {
+      currentSuggestions[key] -= 1;
+    }
+  });
+  var nextIdx = currentFirstSuggestion + numSuggestionsToDisplay - 1;
+
+  if(nextIdx &lt; suggestionBank.length) {
+    var nextSuggestion = suggestionBank[nextIdx];
+    currentSuggestions[nextSuggestion.id] = nextIdx;
+    suggestionElt.replace(generateSuggestionUIElement(nextIdx));
     Event.fire(document, 'xwiki:dom:updated', {'elements' : [suggestionElt]});
   } else {
     suggestionElt.remove();
@@ -456,6 +511,9 @@ function popNextSuggestion() {
 function drawSuggestionsUI() {
   var suggestionsContainer = new Element('div', {'id' : 'suggestions-container'});
   widgetContainer.update(suggestionsContainer);
+
+
+
   //scrap what exists, create UI from 4 first elements in suggestions
   var suggestionBoxes = [];
   Object.keys(currentSuggestions).forEach(function(termId) {
@@ -464,16 +522,35 @@ function drawSuggestionsUI() {
 
   //draw suggestion boxes
   var suggestionList = new Element('ul', {"class" : "suggestions-list"});
-    suggestionBoxes.forEach(function(suggestion) {
-      suggestionList.insert(
-        new Element('li', {"class" : "suggestion-list-item"}).insert(suggestion)
-      )
+  suggestionBoxes.forEach(function(suggestion) {
+    suggestionList.insert(
+      new Element('li', {"class" : "suggestion-list-item"}).insert(suggestion)
+    )
   });
   suggestionsContainer.update(suggestionList);
   Event.fire(document, 'xwiki:dom:updated', {'elements' : [suggestionsContainer]});
 
   //show progress counter
   widgetContainer.insert(new Element("div", {"id" : "suggestion-count"}));
+
+  if (currentFirstSuggestion &gt; 0) {
+    suggestionsContainer.insert({'top': new Element('span', {'class': 'fa fa-chevron-left navigation'}).observe('click', function() {
+      var prevPage = currentFirstSuggestion - numSuggestionsToDisplay;
+      currentFirstSuggestion = Math.max(prevPage, 0);
+      updateCurrentSuggestions();
+    }).insert(new Element('input', {"value": "1", "type": "hidden"}))});
+  }
+
+
+  if ((currentFirstSuggestion + numSuggestionsToDisplay) &lt; suggestionBank.length) {
+    suggestionsContainer.insert(new Element('span', {'class': 'fa fa-chevron-right navigation'}).observe('click', function() {
+      var nextPage = currentFirstSuggestion + numSuggestionsToDisplay;
+      currentFirstSuggestion = Math.min(nextPage, suggestionBank.length - numSuggestionsToDisplay);
+      currentFirstSuggestion = Math.max(currentFirstSuggestion, 0);
+      updateCurrentSuggestions();
+    }).insert(new Element('input', {"value": "2", "type": "hidden"})));
+  }
+
   updateSuggestionCount();
 };
 
@@ -482,9 +559,12 @@ function drawSuggestionsUI() {
  */
 function updateSuggestionCount() {
   var numCurrentSuggestions = Object.keys(currentSuggestions).length;
-  var numTotalSuggestions = numCurrentSuggestions + suggestionBank.length;
+  var numTotalSuggestions = suggestionBank.length;
+  var end = currentFirstSuggestion + numCurrentSuggestions;
+  /* Arrays are 0 indexed, but users are not. */
+  var start = currentFirstSuggestion + 1;
   if(numTotalSuggestions &gt; 0) {
-    $("suggestion-count").update(numCurrentSuggestions + " of " + numTotalSuggestions + " suggestions");
+    $("suggestion-count").update(start + " to " + end + " of " + numTotalSuggestions + " suggestions");
   } else {
     $("suggestion-count").update("No suggestions to display");
   }
@@ -582,7 +662,9 @@ function updateSuggestionCount() {
       <cache>forbid</cache>
     </property>
     <property>
-      <code>.loading-container {
+        <code>#template("colorThemeInit.vm")
+
+.loading-container {
   text-align: center;
   margin: 1em;
 }
@@ -596,6 +678,7 @@ function updateSuggestionCount() {
   -webkit-column-count: 2; /* Chrome, Safari, Opera */
   -moz-column-count: 2; /* Firefox */
   column-count: 2;
+  display: table;
 }
 #suggestions-container .suggestions-list {
   margin: 0 2em 0 2em;
@@ -603,6 +686,9 @@ function updateSuggestionCount() {
 
 #suggestions-container .suggestion-list-item {
   list-style-type: none;
+  display: table-cell;
+  float: left;
+  width: 50%;
 }
 
 #suggestions-container .suggestion {
@@ -643,16 +729,42 @@ margin: 0;
   cursor: pointer;
 }
 
+#annotation-refresh {
+  float: right;
+}
+
 #suggestion-count {
   text-align: center;
   margin-bottom: 1em;
+  }
+
+#suggestions-container &gt; ul {
+  padding-bottom: 0.3em;
+  padding-left: 1em;
+  width: 90%;
+}
+
+#suggestions-container &gt; * {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+#suggestions-container &gt; span {
+  text-align: center;
+}
+
+#suggestions-container &gt; .navigation:hover {
+  background-color: rgba(0,0,0,0.1);
+  color: $theme.linkColor;
+  cursor: pointer;
+  transition: all 0.2s linear;
 }</code>
     </property>
     <property>
       <name/>
     </property>
     <property>
-      <parse/>
+      <parse>1</parse>
     </property>
     <property>
       <use>currentPage</use>
