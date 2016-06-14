@@ -699,7 +699,6 @@ function updateSuggestionCount() {
   -o-column-break-inside: avoid;
   column-break-inside: avoid;
   display: table;
-  width: 17.5em;
   height: 5em;
 }
 
