@@ -39,6 +39,12 @@ public final class PunctuationFilter extends TokenFilter
     public static final int PUNCTUATION_FLAG = 0x1;
 
     /**
+     * The pattern we use to figure out if there's punctuation.
+     */
+    private static final Pattern PATTERN = Pattern.compile("^(.*?)([\\p{Punct}]+)$",
+                                                           Pattern.UNICODE_CHARACTER_CLASS);
+
+    /**
      * The current term.
      */
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
@@ -47,11 +53,6 @@ public final class PunctuationFilter extends TokenFilter
      * The current flags attribute.
      */
     private final FlagsAttribute flattribute = addAttribute(FlagsAttribute.class);
-
-    /**
-     * The pattern we use to figure out if there's punctuation.
-     */
-    private final Pattern pattern = Pattern.compile("^(.*?)([\\.!\\?,:;\"'\\(\\)]+)$");
 
     /**
      * Our string matcher.
@@ -65,7 +66,7 @@ public final class PunctuationFilter extends TokenFilter
     public PunctuationFilter(TokenStream in)
     {
         super(in);
-        m = pattern.matcher(termAtt);
+        m = PATTERN.matcher(termAtt);
     }
 
     /**
