@@ -64,6 +64,11 @@ public class PTVocabularyImpl extends VocabularyNeo4jImpl
     public static final float SIMILARITY = 0.7f;
 
     /**
+     * The initial threshold for result scores.
+     */
+    public static final float BASE_THRESHOLD = 0.30f;
+
+    /**
      * The length of the prefix that must match when searching.
      */
     public static final int FUZZY_PREFIX = 1;
@@ -165,13 +170,14 @@ public class PTVocabularyImpl extends VocabularyNeo4jImpl
          * what it has, but if there's tons and tons of results we'll only return good stuff.
          * This really only works because the hits come back sorted by order of relevance.
          */
-        float threshold = 0.11f;
+        float threshold = BASE_THRESHOLD;
         int count = 2;
         List<Concept> result = new ArrayList<Concept>();
         for (Node n : hits) {
             float score = hits.currentScore();
             Concept c = transformer.apply(n);
             if (score >= threshold) {
+                LOGGER.log(Level.WARNING, "Adding result " + c + " scored " + score);
                 result.add(c);
                 threshold += (0.8 / (count));
                 count *= 2;
