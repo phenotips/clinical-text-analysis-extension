@@ -187,7 +187,12 @@ refreshButton.observe('click', function() {
 
 //generate initial UI elements
 var panel = $$(".current-phenotype-selection")[0];
-if(panel) {
+var suggestionSourcesIds = ['indication_for_referral', 'medical_history'];
+var suggestionSources = $$('textarea[name$="' + suggestionSourcesIds.join('"], textarea[name$="') + '"]');
+var _getSourceTexts = function() {
+ return suggestionSources.pluck('value').join('.\n');
+}
+if (panel &amp;&amp; suggestionSources.size() &gt; 0) {
   var clinicalNotesSubPanel = 
     new Element('div', {"class" : "sub-panel"}).insert(
       new Element('h3', {"class" : "wikigeneratedheader"}).update(
@@ -196,20 +201,14 @@ if(panel) {
     ).insert(widgetContainer);
   panel.insert({top : clinicalNotesSubPanel});
 
-  //listen for changes in indication for referral text box
-  var referalIndication = $("PhenoTips.PatientClass_0_indication_for_referral");
-  var medicalHistory = $("PhenoTips.PatientClass_0_medical_history");
-  text = referalIndication.value + "\n" + medicalHistory.value;
+  // Init
+  text = _getSourceTexts();
   fetchDismissedSuggestions(updateAnnotations);
-  referalIndication.observe('blur', function() {
-    if(!text.startsWith(referalIndication.value)) {
-      text = referalIndication.value + "\n" + medicalHistory.value;
-      updateAnnotations();
-    }
-  });
-  medicalHistory.observe('blur', function() {
-    if(!text.endsWith(medicalHistory.value)) {
-      text = referalIndication.value + "\n" + medicalHistory.value;
+  //listen for changes in indication for referral text box
+  suggestionSources.invoke('observe', 'blur', function() {
+    var newText = _getSourceTexts();
+    if (newText != text) {
+      text = newText;
       updateAnnotations();
     }
   });
