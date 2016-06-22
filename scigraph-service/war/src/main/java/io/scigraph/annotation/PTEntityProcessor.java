@@ -65,6 +65,10 @@ public class PTEntityProcessor extends EntityProcessorImpl
     BlockingQueue<List<Token<String>>> startShingleProducer(String content)
     {
         BlockingQueue<List<Token<String>>> queue = new LinkedBlockingQueue<List<Token<String>>>();
+        /* This is a bit of a hack to make sure newlines get treated as sentence ends - unfortunately it's
+         * necessary because we tokenize by whitespace, so by the time we get to the punctuation filter
+         * it's too late. */
+        content = content.replaceAll("\\r?\\n", ". ");
         Reader r;
         try {
             r = new InputStreamReader(new ByteArrayInputStream(content.getBytes(ENCODING)), ENCODING);
