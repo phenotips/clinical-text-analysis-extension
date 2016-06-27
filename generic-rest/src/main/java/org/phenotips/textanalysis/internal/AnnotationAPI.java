@@ -17,9 +17,8 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.xwiki.component.annotation.Role;
-
 import java.io.InputStream;
+
 import java.util.Map;
 
 /**
@@ -27,7 +26,6 @@ import java.util.Map;
  *
  * @version $Id$
  */
-@Role
 public interface AnnotationAPI
 {
     /**
@@ -65,7 +63,13 @@ public interface AnnotationAPI
     InputStream getEmpty(String method) throws ServiceException;
 
     /**
-     * An exception returned by SciGraph.
+     * Return the service url in use.
+     * @return the endpoint being used by this instance
+     */
+    String getServiceURL();
+
+    /**
+     * An exception returned by the annotation service.
      *
      * @version $Id$
      */

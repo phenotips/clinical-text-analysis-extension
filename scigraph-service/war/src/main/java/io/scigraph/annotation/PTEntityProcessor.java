@@ -68,10 +68,10 @@ public class PTEntityProcessor extends EntityProcessorImpl
         /* This is a bit of a hack to make sure newlines get treated as sentence ends - unfortunately it's
          * necessary because we tokenize by whitespace, so by the time we get to the punctuation filter
          * it's too late. */
-        content = content.replaceAll("\\r?\\n", ". ");
+        String concat = content.replaceAll("\\r?\\n", ". ");
         Reader r;
         try {
-            r = new InputStreamReader(new ByteArrayInputStream(content.getBytes(ENCODING)), ENCODING);
+            r = new InputStreamReader(new ByteArrayInputStream(concat.getBytes(ENCODING)), ENCODING);
         } catch (UnsupportedEncodingException e) {
             /* The encoding is hardcoded, and it's the pretty standard utf-8, so if it's not
              * supported that's a problem that should probably be fixed. */

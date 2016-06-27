@@ -22,14 +22,17 @@ import org.phenotips.textanalysis.TermAnnotationService;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+import org.xwiki.configuration.ConfigurationSource;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,11 +53,34 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
      */
     private static final String CATEGORY = "abnormality";
 
+
+    /**
+     * The default URL of the annotation service.
+     */
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/scigraph/scigraph/";
+
+    /**
+     * The config key for the annotations service url.
+     */
+    private static final String SERVICE_URL_CFG = "phenotips.textanalysis.internal.serviceURL";
+
     /**
      * The object for API interaction with scigraph.
      */
     @Inject
+    private AnnotationAPIFactory apiFactory;
+
+    /**
+     * The annotation api in use.
+     */
     private AnnotationAPI api;
+
+    /**
+     * The global configuration.
+     */
+    @Inject
+    @Named("xwikicfg")
+    private ConfigurationSource configuration;
 
     /**
      * The object mapper to use for json parsing.
@@ -64,6 +90,7 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
     @Override
     public void initialize() throws InitializationException {
         mapper = new ObjectMapper();
+        api = apiFactory.build(configuration.getProperty(SERVICE_URL_CFG, DEFAULT_BASE_URL));
     }
 
     @Override

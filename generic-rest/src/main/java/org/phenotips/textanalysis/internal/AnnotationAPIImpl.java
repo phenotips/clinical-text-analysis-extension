@@ -17,9 +17,6 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import org.xwiki.component.annotation.Component;
-import org.xwiki.configuration.ConfigurationSource;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,9 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -48,26 +42,27 @@ import org.apache.http.message.BasicNameValuePair;
  *
  * @version $Id$
  */
-@Component
 public class AnnotationAPIImpl implements AnnotationAPI
 {
-
-    /**
-     * The default URL of the annotation service.
-     */
-    private static final String DEFAULT_BASE_URL = "http://localhost:8080/scigraph/scigraph/";
-
     /**
      * The charset to use when sending requests.
      */
     private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
-     * The global configuration.
+     * The api endpoint to hit.
      */
-    @Inject
-    @Named("xwikicfg")
-    private ConfigurationSource configuration;
+    private URL base;
+
+    /**
+     * Constructor.
+     * @param serviceURL the api endpoint to hit.
+     * @throws MalformedURLException if the url given is no good
+     */
+    public AnnotationAPIImpl(String serviceURL) throws MalformedURLException
+    {
+        base = new URL(serviceURL);
+    }
 
     @Override
     public InputStream postJson(String method, InputStream content) throws ServiceException
@@ -122,13 +117,18 @@ public class AnnotationAPIImpl implements AnnotationAPI
         }
     }
 
+    @Override
+    public String getServiceURL()
+    {
+        return base.toString();
+    }
+
     /**
      * Get the uri to access a method.
      * @param method the name of the method
      * @return the corresponding uri.
      */
     private URI getAbsoluteURI(String method) throws URISyntaxException, MalformedURLException {
-        URL base = new URL(configuration.getProperty("phenotips.textanalysis.internal.serviceURL", DEFAULT_BASE_URL));
         URL absolute = new URL(base, method);
         return absolute.toURI();
     }
