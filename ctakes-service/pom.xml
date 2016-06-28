@@ -28,6 +28,18 @@
   <artifactId>clinical-text-analysis-extension-ctakes-service</artifactId>
   <name>PhenoTips - Clinical Text Analysis - Ctakes server</name>
   <packaging>war</packaging>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype-public-repository</id>
+      <url>https://oss.sonatype.org/content/groups/public</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>net.sf.json-lib</groupId>
@@ -102,11 +114,11 @@
       <artifactId>ctakes-pos-tagger</artifactId>
       <version>3.2.2</version>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>org.apache.ctakes</groupId>
       <artifactId>ctakes-lvg</artifactId>
       <version>3.2.2</version>
-    </dependency>-->
+    </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
@@ -156,4 +168,50 @@
   <properties>
     <coverage.instructionRatio>0.16</coverage.instructionRatio>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <id>download-lvg</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://lexsrv3.nlm.nih.gov/LexSysGroup/Projects/lvg/2008/release/lvg2008.tgz</url>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <unpack>true</unpack>
+              <md5>6dde9ebffae96185820d914131a93dc1</md5>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/classes/data/HSqlDb</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/lvg2008/data/HSqlDb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

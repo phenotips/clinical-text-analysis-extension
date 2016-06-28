@@ -21,6 +21,9 @@
     <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
     <primitive>false</primitive>
     <delegateAnalysisEngineSpecifiers>
+        <delegateAnalysisEngine key="LookupWindowAnnotator">
+            <import location="LookupWindowAnnotator.xml" />
+        </delegateAnalysisEngine>
         <delegateAnalysisEngine key="SimpleSegmentAnnotator">
             <import location="SimpleSegmentAnnotator.xml" />
         </delegateAnalysisEngine>
@@ -45,9 +48,9 @@
         <!-- The LVG is recommended but causes tons of problems because it depends
              on a different version of hsql, plus requires a db to be populated and
              connected to and so on -->
-        <!--<delegateAnalysisEngine key="LvgAnnotator">
+        <delegateAnalysisEngine key="LvgAnnotator">
             <import location="LvgAnnotator.xml" />
-        </delegateAnalysisEngine>-->
+        </delegateAnalysisEngine>
         <delegateAnalysisEngine key="ContextDependentTokenizerAnnotator">
             <import location="ContextDependentTokenizerAnnotator.xml" />
         </delegateAnalysisEngine>
@@ -98,12 +101,13 @@
                 <node>SimpleSegmentAnnotator</node>
                 <node>SentenceDetectorAnnotator</node>
                 <node>TokenizerAnnotator</node>
-                <!--<node>LvgAnnotator</node>-->
-                <!--<node>ContextDependentTokenizerAnnotator</node>
+                <node>LvgAnnotator</node>
+                <node>ContextDependentTokenizerAnnotator</node>
                 <node>POSTagger</node>
                 <node>Chunker</node>
                 <node>AdjustNounPhraseToIncludeFollowingNP</node>
-                <node>AdjustNounPhraseToIncludeFollowingPPNP</node>-->
+                <node>AdjustNounPhraseToIncludeFollowingPPNP</node>
+                <node>LookupWindowAnnotator</node>
                 <node>DictionaryLookupAnnotator</node>
             </fixedFlow>
         </flowConstraints>

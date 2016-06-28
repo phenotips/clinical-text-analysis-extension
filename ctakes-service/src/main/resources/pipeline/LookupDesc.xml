@@ -50,8 +50,8 @@
                 <properties>
                     <property key="textMetaFields" value="synonym|synonym1|synonym2|synonym3|synonym4|synonym5|synonym6|synonym7|synonym8|synonym9|label|id"/>
                     <property key="maxPermutationLevel" value="7"/>
-                    <property key="windowAnnotations" value="org.apache.ctakes.typesystem.type.textspan.Sentence"/>
-                    <!--<property key="windowAnnotations" value="org.apache.ctakes.typesystem.type.textspan.LookupWindowAnnotation"/>  -->
+                    <!--<property key="windowAnnotations" value="org.apache.ctakes.typesystem.type.textspan.Sentence"/>-->
+                    <property key="windowAnnotations" value="org.apache.ctakes.typesystem.type.textspan.LookupWindowAnnotation"/>
                     <property key="exclusionTags" value="VB,VBD,VBG,VBN,VBP,VBZ,CC,CD,DT,EX,LS,MD,PDT,POS,PP,PP$,RP,TO,WDT,WP,WPS,WRB"/>
                 </properties>
             </lookupInitializer>
