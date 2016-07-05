@@ -25,33 +25,12 @@
     <artifactId>clinical-text-analysis-extension</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>clinical-text-analysis-extension-ui</artifactId>
-  <name>PhenoTips - Clinical Text Analysis - User Interface Components</name>
-  <packaging>xar</packaging>
+  <artifactId>scigraph-service</artifactId>
+  <packaging>pom</packaging>
+  <name>Scigraph standalone war parent</name>
 
-  <properties>
-    <!-- Don't run CLIRR here since there's no Java code. -->
-    <xwiki.clirr.skip>true</xwiki.clirr.skip>
-    <!-- Name to display by the Extension Manager -->
-    <xwiki.extension.name>Core text analysis UI</xwiki.extension.name>
-  </properties>
-
-  <dependencies>
-    <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>clinical-text-analysis-extension-generic-rest</artifactId>
-        <version>${project.version}</version>
-        <scope>runtime</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.xwiki.commons</groupId>
-        <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
-        <version>${xwiki.version}</version>
-      </extension>
-    </extensions>
-  </build>
+  <modules>
+    <module>war</module>
+  </modules>
 </project>
+

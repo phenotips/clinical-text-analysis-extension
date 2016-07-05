@@ -58,9 +58,12 @@
       #set ($result = {
           'start' : $annotation.getStartPos(),
           'end' : $annotation.getEndPos(),
+          'startInSentence': $annotation.getStartInSentence(),
+          'endInSentence': $annotation.getEndInSentence(),
           'id' : $termId,
           'label' : $term.name,
-          'term_category' : $term.term_category
+          'term_category' : $term.term_category,
+          'sentence': $annotation.getSentence()
         })
       #set ($discard = $results.put($termId, $result))
     #end

@@ -1,0 +1,48 @@
+graphConfiguration:
+    location: ./hpo
+    indexedNodeProperties:
+      - category
+      - label
+      - synonym
+      - comment
+    exactNodeProperties:
+      - label
+      - synonym
+    curies:
+      rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
+      hpo: 'http://purl.obolibrary.org/obo/'
+      oboInOwl: 'http://www.geneontology.org/formats/oboInOwl#'
+
+    # Set Neo4j configuration options
+    neo4jConfig:
+      dump_configuration : true
+      dbms.pagecache.memory : 1G
+
+# The number of threads dedicated to reading ontologies
+producerThreadCount: 4
+
+# The number of threads dedicated to processing ontology axioms
+consumerThreadCount: 4
+
+ontologies:
+    - url: https://compbio.charite.de/jenkins/job/hpo/lastStableBuild/artifact/hp/hp.owl
+
+categories:
+    http://purl.obolibrary.org/obo/HP_0000001 : phenotype
+    http://purl.obolibrary.org/obo/HP_0000118 : abnormality
+
+mappedProperties:
+    - name: label
+      properties:
+      - rdfs:label
+    - name: comment
+      properties:
+      - rdfs:comment
+      - hpo:IAO_0000115
+      - hpo:HP_0040005
+    - name: synonym
+      properties:
+      - oboInOwl:hasExactSynonym
+      - oboInOwl:hasBroadSynonym
+      - oboInOwl:hasRelatedSynonym
+      - oboInOwl:hasNarrowSynonym
