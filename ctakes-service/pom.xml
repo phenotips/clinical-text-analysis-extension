@@ -167,6 +167,7 @@
   </dependencies>
   <properties>
     <coverage.instructionRatio>0.16</coverage.instructionRatio>
+    <checkstyle.suppressions.location>${basedir}/src/checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
   </properties>
   <build>
     <plugins>

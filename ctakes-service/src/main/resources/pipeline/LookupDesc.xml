@@ -46,7 +46,7 @@
 
         <lookupBinding>
             <dictionaryRef idRef="DICT_HPO"/>
-            <lookupInitializer className="org.apache.ctakes.dictionary.lookup.ae.FirstTokenPermLookupInitializerImpl">
+            <lookupInitializer className="org.phenotips.textanalysis.internal.PTTokenPermutationInitializer">
                 <properties>
                     <property key="textMetaFields" value="synonym|synonym1|synonym2|synonym3|synonym4|synonym5|synonym6|synonym7|synonym8|synonym9|label|id"/>
                     <property key="maxPermutationLevel" value="7"/>
