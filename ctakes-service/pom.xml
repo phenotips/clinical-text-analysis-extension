@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.phenotips</groupId>
+    <artifactId>clinical-text-analysis-extension</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>clinical-text-analysis-extension-ctakes-service</artifactId>
+  <name>PhenoTips - Clinical Text Analysis - Ctakes server</name>
+  <packaging>war</packaging>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype-public-repository</id>
+      <url>https://oss.sonatype.org/content/groups/public</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  <dependencies>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <classifier>jdk15</classifier>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.10.8</version>
+    </dependency>
+
+    <!-- ctakes dependencies -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-ehcache</artifactId>
+      <version>3.6.9.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-core</artifactId>
+      <version>3.2.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-assertion</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-dictionary-lookup</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-chunker</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-pos-tagger</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-lvg</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>2.0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet.ext.servlet</artifactId>
+      <version>2.0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jaxrs</artifactId>
+      <version>2.0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jackson</artifactId>
+      <version>2.0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jaxb</artifactId>
+      <version>2.0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ctakes</groupId>
+      <artifactId>ctakes-context-tokenizer</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>owlapi-distribution</artifactId>
+      <version>4.2.4</version>
+    </dependency>
+  </dependencies>
+  <properties>
+    <coverage.instructionRatio>0.16</coverage.instructionRatio>
+    <checkstyle.suppressions.location>${basedir}/src/checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <id>download-lvg</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://lexsrv3.nlm.nih.gov/LexSysGroup/Projects/lvg/2008/release/lvg2008.tgz</url>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <unpack>true</unpack>
+              <md5>6dde9ebffae96185820d914131a93dc1</md5>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/classes/data/HSqlDb</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/lvg2008/data/HSqlDb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

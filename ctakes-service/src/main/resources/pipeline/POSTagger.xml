@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+-->
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+<frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+<primitive>true</primitive>
+<annotatorImplementationName>org.apache.ctakes.postagger.POSTagger</annotatorImplementationName>
+<analysisEngineMetaData>
+<name>POSTagger</name>
+<description/>
+<version>1.0</version>
+<vendor/>
+<configurationParameters>
+<configurationParameter>
+<name>PosModelFile</name>
+<description>The file that contains the MaxEnt model used by the part of speech (POS) tagger</description>
+<type>String</type>
+<multiValued>false</multiValued>
+<mandatory>true</mandatory>
+</configurationParameter>
+</configurationParameters>
+<configurationParameterSettings>
+<nameValuePair>
+<name>PosModelFile</name>
+<value>
+<string>org/apache/ctakes/postagger/models/mayo-pos.zip</string>
+</value>
+</nameValuePair>
+</configurationParameterSettings>
+<typeSystemDescription>
+<imports>
+<import name="org.apache.ctakes.typesystem.types.TypeSystem"/>
+</imports>
+</typeSystemDescription>
+<typePriorities>
+<priorityList>
+<type>org.apache.ctakes.typesystem.type.textspan.Segment</type>
+<type>org.apache.ctakes.typesystem.type.textspan.Sentence</type>
+<type>org.apache.ctakes.typesystem.type.syntax.BaseToken</type>
+</priorityList>
+</typePriorities>
+<fsIndexCollection/>
+<capabilities>
+<capability>
+<inputs>
+<type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textspan.Sentence</type>
+<type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.BaseToken</type>
+</inputs>
+<outputs>
+<type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.BaseToken</type>
+</outputs>
+<languagesSupported/>
+</capability>
+</capabilities>
+<operationalProperties>
+<modifiesCas>true</modifiesCas>
+<multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+<outputsNewCASes>false</outputsNewCASes>
+</operationalProperties>
+</analysisEngineMetaData>
+<resourceManagerConfiguration/>
+</analysisEngineDescription>
