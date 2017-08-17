@@ -25,13 +25,28 @@ import org.phenotips.vocabulary.VocabularyTerm;
  * @version $Id$
  * @since 1.0M1
  */
-public class TermAnnotation
+public class TermAnnotation implements Comparable<TermAnnotation>
 {
     private final long mStartPos;
 
     private final long mEndPos;
 
     private final VocabularyTerm mTerm;
+
+    /**
+     * The sentence this term annotation appears in.
+     */
+    private String sentence;
+
+    /**
+     * The start of this annotation within the sentence.
+     */
+    private long startInSentence;
+
+    /**
+     * The end of this annotation within the sentence.
+     */
+    private long endInSentence;
 
     /**
      * Constructs an annotation for a an ontology term using it's start and end positions within the text.
@@ -69,6 +84,50 @@ public class TermAnnotation
     public VocabularyTerm getTerm()
     {
         return this.mTerm;
+    }
+
+    /**
+     * @return the sentence in which the term occurs.
+     */
+    public String getSentence()
+    {
+        return sentence;
+    }
+
+    /**
+     * @return the position within the sentence where the term starts
+     */
+    public long getStartInSentence()
+    {
+        return startInSentence;
+    }
+
+    /**
+     * @return the position within the sentence where the term ends
+     */
+    public long getEndInSentence()
+    {
+        return endInSentence;
+    }
+
+    /**
+     * Set the sentence that this term appears in.
+     * @param sentence the sentence.
+     * @param startInSentence the position within the sentence where the term starts
+     * @param endInSentence the position within the sentence where the term ends
+     */
+    public void setSentence(String sentence, long startInSentence, long endInSentence)
+    {
+        this.sentence = sentence.trim();
+        this.startInSentence = startInSentence;
+        this.endInSentence = endInSentence;
+    }
+
+    @Override
+    public int compareTo(TermAnnotation other)
+    {
+        /* TODO: Casting. Hopefully they're not that far off that we overflow... */
+        return (int) (this.getStartPos() - other.getStartPos());
     }
 
     @Override

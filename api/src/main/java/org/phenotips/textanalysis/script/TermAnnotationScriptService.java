@@ -20,6 +20,7 @@ package org.phenotips.textanalysis.script;
 import org.phenotips.textanalysis.TermAnnotation;
 import org.phenotips.textanalysis.TermAnnotationService;
 import org.phenotips.textanalysis.TermAnnotationService.AnnotationException;
+import org.phenotips.textanalysis.internal.TermAnnotationSentenceDetector;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.script.service.ScriptService;
@@ -43,7 +44,7 @@ import javax.inject.Singleton;
 public class TermAnnotationScriptService implements ScriptService
 {
     @Inject
-    @Named("biolark")
+    @Named("genericREST")
     private TermAnnotationService service;
 
     /**
@@ -55,7 +56,10 @@ public class TermAnnotationScriptService implements ScriptService
     public List<TermAnnotation> get(String text)
     {
         try {
-            return this.service.annotate(text);
+            List<TermAnnotation> retval = this.service.annotate(text);
+            TermAnnotationSentenceDetector detector = new TermAnnotationSentenceDetector();
+            detector.detectSentences(retval, text);
+            return retval;
         } catch (AnnotationException e) {
             return null;
         }

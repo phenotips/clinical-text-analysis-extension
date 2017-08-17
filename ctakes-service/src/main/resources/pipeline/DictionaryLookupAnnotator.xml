@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+-->
+<taeDescription xmlns="http://uima.apache.org/resourceSpecifier">
+  <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+  <primitive>true</primitive>
+  <annotatorImplementationName>org.apache.ctakes.dictionary.lookup.ae.DictionaryLookupAnnotator</annotatorImplementationName>
+  <analysisEngineMetaData>
+    <name>DictionaryLookupAnnotator</name>
+    <description/>
+    <version/>
+    <vendor/>
+    <configurationParameters>
+      <configurationParameter>
+        <name>maxListSize</name>
+        <description>Specifies the maximum number of items to be returned from an lucene query.</description>
+        <type>Integer</type>
+        <multiValued>false</multiValued>
+        <mandatory>false</mandatory>
+      </configurationParameter>
+    </configurationParameters>
+    <configurationParameterSettings>
+      <nameValuePair>
+        <name>maxListSize</name>
+        <value>
+          <integer>2147483647</integer>
+        </value>
+      </nameValuePair>
+    </configurationParameterSettings>
+    <typeSystemDescription>
+      <imports>
+      </imports>
+    </typeSystemDescription>
+    <typePriorities/>
+    <fsIndexCollection/>
+    <capabilities>
+      <capability>
+        <inputs>
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.BaseToken</type>
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textspan.LookupWindowAnnotation</type>
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textspan.Sentence</type>
+        </inputs>
+        <outputs>
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation</type>
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.textsem.EntityMention</type>
+        </outputs>
+        <languagesSupported/>
+      </capability>
+    </capabilities>
+    <operationalProperties>
+      <modifiesCas>true</modifiesCas>
+      <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+      <outputsNewCASes>false</outputsNewCASes>
+    </operationalProperties>
+  </analysisEngineMetaData>
+  <externalResourceDependencies>
+    <externalResourceDependency>
+      <key>LookupDescriptor</key>
+      <description/>
+      <interfaceName>org.apache.ctakes.core.resource.FileResource</interfaceName>
+      <optional>false</optional>
+    </externalResourceDependency>
+    <externalResourceDependency>
+      <key>HPOIndexReader</key>
+      <description/>
+      <interfaceName>org.apache.ctakes.core.resource.LuceneIndexReaderResource</interfaceName>
+      <optional>false</optional>
+    </externalResourceDependency>
+  </externalResourceDependencies>
+  <resourceManagerConfiguration>
+    <externalResources>
+      <externalResource>
+        <name>HPOIndex</name>
+        <description/>
+        <configurableDataResourceSpecifier>
+          <url/>
+          <resourceMetaData>
+            <name/>
+            <configurationParameters>
+              <configurationParameter>
+                <name>UseMemoryIndex</name>
+                <type>Boolean</type>
+                <multiValued>false</multiValued>
+                <mandatory>true</mandatory>
+              </configurationParameter>
+              <configurationParameter>
+                <name>IndexDirectory</name>
+                <type>String</type>
+                <multiValued>false</multiValued>
+                <mandatory>true</mandatory>
+              </configurationParameter>
+            </configurationParameters>
+            <configurationParameterSettings>
+              <nameValuePair>
+                <name>UseMemoryIndex</name>
+                <value>
+                  <boolean>true</boolean>
+                </value>
+              </nameValuePair>
+              <nameValuePair>
+                <name>IndexDirectory</name>
+                <value>
+                  <string>data/ctakes/hpo</string>
+                </value>
+              </nameValuePair>
+            </configurationParameterSettings>
+          </resourceMetaData>
+        </configurableDataResourceSpecifier>
+        <implementationName>org.apache.ctakes.core.resource.LuceneIndexReaderResourceImpl</implementationName>
+      </externalResource>
+      <externalResource>
+        <name>LookupDescriptorFile</name>
+        <description/>
+        <fileResourceSpecifier>
+          <fileUrl>file:pipeline/LookupDesc.xml</fileUrl>
+        </fileResourceSpecifier>
+        <implementationName>org.apache.ctakes.core.resource.FileResourceImpl</implementationName>
+      </externalResource>
+    </externalResources>
+    <externalResourceBindings>
+      <externalResourceBinding>
+        <key>LookupDescriptor</key>
+        <resourceName>LookupDescriptorFile</resourceName>
+      </externalResourceBinding>
+      <externalResourceBinding>
+        <key>HPOIndexReader</key>
+        <resourceName>HPOIndex</resourceName>
+      </externalResourceBinding>
+    </externalResourceBindings>
+  </resourceManagerConfiguration>
+</taeDescription>
