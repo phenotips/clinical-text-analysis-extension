@@ -674,10 +674,6 @@ function updateSuggestionCount() {
 
 #suggestions-container {
   padding-top: 0.8em;
-  -webkit-column-count: 2; /* Chrome, Safari, Opera */
-  -moz-column-count: 2; /* Firefox */
-  column-count: 2;
-  display: table;
 }
 #suggestions-container .suggestions-list {
   margin: 0 2em 0 2em;
@@ -685,24 +681,15 @@ function updateSuggestionCount() {
 
 #suggestions-container .suggestion-list-item {
   list-style-type: none;
-  display: table-cell;
-  float: left;
-  width: 50%;
 }
 
 #suggestions-container .suggestion {
   margin: 0 1.0em 1.7em;
   position: relative;
-  -webkit-column-break-inside: avoid;
-  -moz-column-break-inside: avoid;
-  -o-column-break-inside: avoid;
-  column-break-inside: avoid;
-  display: table;
-  height: 5em;
 }
 
 #suggestions-container .yes-no-picker {
-margin: 0;
+  margin: 0;
 }
 
 #suggestions-container .suggestion-term {
