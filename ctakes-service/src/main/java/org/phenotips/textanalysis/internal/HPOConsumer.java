@@ -56,11 +56,6 @@ public class HPOConsumer extends BaseLookupConsumerImpl
     private Properties properties;
 
     /**
-     * The maximum number of elements.
-     */
-    private int maxListSize;
-
-    /**
      * CTOR.
      *
      * @param aCtx the UimaContext
@@ -70,7 +65,6 @@ public class HPOConsumer extends BaseLookupConsumerImpl
     public HPOConsumer(UimaContext aCtx, Properties properties, int maxListSize)
     {
         this.properties = properties;
-        this.maxListSize = maxListSize;
     }
 
     @Override

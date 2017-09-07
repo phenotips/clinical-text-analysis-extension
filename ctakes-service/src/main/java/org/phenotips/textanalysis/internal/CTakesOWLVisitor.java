@@ -48,9 +48,8 @@ import org.semanticweb.owlapi.util.OWLOntologyWalkerVisitor;
 public class CTakesOWLVisitor extends OWLOntologyWalkerVisitor
 {
     /**
-     * How big the documents map should be at first.
-     * Set this as close as possible to the estimated number of phenotypes,
-     * to avoid growing the hash map.
+     * How big the documents map should be at first. Set this as close as possible to the estimated number of
+     * phenotypes, to avoid growing the hash map.
      */
     private static final int INITIAL_MAP_SIZE = 65536;
 
@@ -129,38 +128,37 @@ public class CTakesOWLVisitor extends OWLOntologyWalkerVisitor
     /**
      * A class representing a single phenotype found in the HPO.
      */
-    private static class Phenotype
+    private static final class Phenotype
     {
-        /* The class is private, so it's probably reasonable to have public fields. */
         /**
          * The id of the phenotype.
          */
-        public final String id;
+        private final String id;
 
         /**
          * The list of synonyms given.
          */
-        public List<String> synonyms;
+        private List<String> synonyms;
 
         /**
          * The label for the phenotype.
          */
-        public String label;
+        private String label;
 
         /**
          * A collation of all definitions given.
          */
-        public String definition;
+        private String definition;
 
         /**
          * The namespace that the phenotype belongs to.
          */
-        public String namespace;
+        private String namespace;
 
         /**
          * The parent of this phenotype.
          */
-        public List<String> parents;
+        private List<String> parents;
 
         /**
          * CTOR.

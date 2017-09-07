@@ -390,14 +390,12 @@ public class PTTokenPermutation extends FirstTokenPermutationImpl
         final Set<LookupAnnotation> endCandidateSet = new HashSet<>();
 
         for (Map.Entry<Integer, List<LookupAnnotation>> entry : wStartOffsetMap.entrySet()) {
-            final Integer startOffset = entry.getKey();
-            if (startOffset <= lt.getStartOffset()) {
+            if (entry.getKey() <= lt.getStartOffset()) {
                 startCandidateSet.addAll(entry.getValue());
             }
         }
         for (Map.Entry<Integer, List<LookupAnnotation>> entry : wEndOffsetMap.entrySet()) {
-            final Integer endOffset = entry.getKey();
-            if (endOffset >= lt.getEndOffset()) {
+            if (entry.getKey() >= lt.getEndOffset()) {
                 endCandidateSet.addAll(entry.getValue());
             }
         }
@@ -549,7 +547,7 @@ public class PTTokenPermutation extends FirstTokenPermutationImpl
      *
      * @param firstLookupToken -
      * @return -
-     * @throws Exception
+     * @throws Exception by the ctakes library
      */
     private Collection<MetaDataHit> getFirstTokenHits(final LookupToken firstLookupToken) throws Exception
     {
