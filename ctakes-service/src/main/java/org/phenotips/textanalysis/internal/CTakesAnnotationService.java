@@ -17,11 +17,8 @@
  */
 package org.phenotips.textanalysis.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,12 +27,12 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.ctakes.typesystem.type.textsem.EntityMention;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
 import org.apache.uima.UIMAFramework;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -57,56 +54,36 @@ import org.restlet.resource.ServerResource;
  */
 public class CTakesAnnotationService extends ServerResource
 {
-    /**
-     * The location where the HPO index is.
-     */
-    private static final String INDEX_LOCATION = "data/ctakes/hpo";
+    /** The UIMA analysis engine in use. */
+    private AnalysisEngine engine;
 
-    /**
-     * The JCas instance used for analysis.
-     */
-    private static JCas jcas;
+    /** A pool for Common Analysis System (CAS) objects, which are responsible for each text parsing request. */
+    private final ObjectPool<JCas> jcasPool;
 
-    /**
-     * The uima analysis engine in use.
-     */
-    private static AnalysisEngine ae;
+    /** Manages the HPO index to be used by CTAKES. */
+    private HpoIndex index;
 
-    /**
-     * The directory where the lucene index is contained.
-     */
-    private Directory indexDirectory;
-
-    /**
-     * CTOR.
-     */
+    /** Basic constructor, initializes all the used services. */
     public CTakesAnnotationService()
     {
         super();
         try {
-            this.indexDirectory = new MMapDirectory(new File(INDEX_LOCATION));
-            if (!isIndexed()) {
-                reindex();
+            this.index = new HpoIndex();
+            if (!this.index.isIndexed()) {
+                this.index.reindex();
             }
-            if (jcas == null) {
-                URL engineXML = CTakesAnnotationService.class.getClassLoader().
-                                getResource("pipeline/AnalysisEngine.xml");
-                XMLInputSource in = new XMLInputSource(engineXML);
-                ResourceSpecifier specifier = UIMAFramework.getXMLParser().parseResourceSpecifier(in);
-                ae = UIMAFramework.produceAnalysisEngine(specifier);
-                jcas = ae.newJCas();
-            }
+            URL engineXML =
+                CTakesAnnotationService.class.getClassLoader().getResource("pipeline/AnalysisEngine.xml");
+            XMLInputSource in = new XMLInputSource(engineXML);
+            ResourceSpecifier specifier = UIMAFramework.getXMLParser().parseResourceSpecifier(in);
+            this.engine = UIMAFramework.produceAnalysisEngine(specifier);
+            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            config.setMaxTotal(8);
+            config.setMinIdle(1);
+            this.jcasPool = new GenericObjectPool<>(new CasFactory(this.engine), config);
         } catch (IOException | InvalidXMLException | ResourceInitializationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Return whether the HPO has already been indexed.
-     */
-    private boolean isIndexed()
-    {
-        return DirectoryReader.indexExists(this.indexDirectory);
     }
 
     /**
@@ -114,15 +91,18 @@ public class CTakesAnnotationService extends ServerResource
      *
      * @param form the urlencoded form containing params
      * @return the http response object
+     * @throws Exception from CTAKES
      */
     @Post
     @Produces("application/json")
     @Consumes("application/x-www-form-urlencoded")
-    public List<Map<String, Object>> annotate(Form form)
+    public List<Map<String, Object>> annotate(Form form) throws Exception
     {
         String content = form.getFirstValue("content");
+        JCas jcas = null;
         try {
-            List<EntityMention> annotations = annotateText(content);
+            jcas = this.jcasPool.borrowObject();
+            List<EntityMention> annotations = annotateText(content, jcas);
             List<Map<String, Object>> transformed = new ArrayList<>(annotations.size());
             for (EntityMention annotation : annotations) {
                 Map<String, Object> map = new HashMap<>(3);
@@ -137,8 +117,12 @@ public class CTakesAnnotationService extends ServerResource
                 transformed.add(map);
             }
             return transformed;
-        } catch (AnalysisEngineProcessException e) {
+        } catch (Exception e) {
             throw new ResourceException(e);
+        } finally {
+            if (jcas != null) {
+                this.jcasPool.returnObject(jcas);
+            }
         }
     }
 
@@ -148,37 +132,27 @@ public class CTakesAnnotationService extends ServerResource
      * @return whether it worked
      */
     @Post("json")
-    public Map<String, Object> reindex()
+    public Response reindex()
     {
-        synchronized (CTakesAnnotationService.class) {
-            try {
-                URL url =
-                    new URL("https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.owl");
-                Path temp = Files.createTempFile("hpoLoad", ".owl");
-                FileUtils.copyURLToFile(url, temp.toFile());
-                CTakesLoader loader = new CTakesLoader(temp.toFile().toString(), this.indexDirectory);
-                loader.load();
-                loader.close();
-                Map<String, Object> retval = new HashMap<>(1);
-                retval.put("success", true);
-                return retval;
-            } catch (IOException e) {
-                throw new ResourceException(e);
-            }
+        try {
+            this.index.reindex();
+            return Response.ok().build();
+        } catch (Exception ex) {
+            return Response.serverError().build();
         }
     }
 
     /**
      * Actually interact with CTakes to have the text annotated.
+     *
      * @param text the text to annotate
      * @return a list of CTakes EntityMentions
      * @throws AnalysisEngineProcessException if ctakes throws.
      */
-    private List<EntityMention> annotateText(String text) throws AnalysisEngineProcessException
+    private List<EntityMention> annotateText(String text, JCas jcas) throws AnalysisEngineProcessException
     {
-        jcas.reset();
         jcas.setDocumentText(text);
-        ae.process(jcas);
+        this.engine.process(jcas);
         List<EntityMention> mentions = new ArrayList<>();
         Iterator<Annotation> iter = jcas.getAnnotationIndex(EntityMention.type).iterator();
         while (iter.hasNext()) {
