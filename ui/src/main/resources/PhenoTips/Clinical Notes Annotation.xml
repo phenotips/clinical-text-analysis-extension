@@ -303,13 +303,11 @@ function generateYesNoPicker(suggestion, suggestionElt, categoryElt) {
         qsWidget._suggestPicker.silent = true;
         qsWidget._suggestPicker.acceptSuggestion({'id' : suggestion.id, 'value' : suggestion.label, 'category' : categoryClone, 'negative' : negative});
         qsWidget._suggestPicker.silent = false;
-        new XWiki.widgets.Notification("$services.localization.render('phenotips.PatientSheetCode.added')".replace("__name__", suggestion.id), 'done');
         dismissSuggestion(suggestion.id, suggestionElt);
       } else {
         var existingValue = $(qsWidget.id + '_' + input.value);
         if (existingValue) {
           existingValue.checked = false;
-          new XWiki.widgets.Notification("$services.localization.render('phenotips.PatientSheetCode.removed')".replace("__name__", suggestion.id), 'done');
         }
       }
     });
