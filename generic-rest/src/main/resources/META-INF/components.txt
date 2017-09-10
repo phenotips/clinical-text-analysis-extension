@@ -1,3 +1,4 @@
 org.phenotips.textanalysis.internal.GenericRESTAnnotationService
+org.phenotips.textanalysis.internal.RESTWrapperConfigurationSource
 org.phenotips.textanalysis.internal.RESTWrapperImpl
 org.phenotips.textanalysis.internal.AnnotationAPIFactoryImpl

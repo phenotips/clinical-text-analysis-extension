@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+-->
+
+<xwikidoc version="1.1">
+  <web>PhenoTips</web>
+  <name>TextAnnotationConfigurationClass</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <creationDate>1504871353000</creationDate>
+  <parent>PhenoTips.WebHome</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1504891291000</date>
+  <contentUpdateDate>1504891159000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <content>admin.textmining=Text mining
+phenotips.textMining.admin.title=Text mining service settings
+PhenoTips.TextAnnotationConfiguration_serviceURL=Text mining service URL
+PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is the default embedded text analyzer. To run the default analyzer at a different port, please use the "Other" option below with the URL "http://localhost:{other_port}/ctakes/".
+PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter service URL)</content>
+  <class>
+    <name>PhenoTips.TextAnnotationConfigurationClass</name>
+    <customClass/>
+    <customMapping/>
+    <defaultViewSheet/>
+    <defaultEditSheet/>
+    <defaultWeb/>
+    <nameField/>
+    <validationScript/>
+    <serviceURL>
+      <cache>0</cache>
+      <customDisplay>{{velocity}}
+#set ($defaultServices = {
+  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/'
+})
+#if ("$!value" == '')
+  #set ($value = $defaultServices.get('defaultLocalCtakes'))
+#end
+#set ($isDefaultService = false)
+{{html clean="false" wiki="false"}}
+#foreach ($s in $defaultServices.keySet())
+  #set ($url = $defaultServices.get($s))
+  #set ($infoKey = "PhenoTips.TextAnnotationConfiguration_serviceURL_${s}.hint")
+  #set ($info = $escapetool.xml($services.localization.render($infoKey)))
+  #if ($info == $infoKey)
+    #set ($info = '')
+  #end
+  &lt;p&gt;
+    &lt;label&gt;
+      &lt;input type="radio" name="${prefix}${name}" value="$escapetool.xml($url)" #if($url == $value)checked="checked" #set($isDefaultService = true)#end/&gt;
+      $url
+    &lt;/label&gt;
+    #if ($info != '')
+      &lt;span class="xHelpButton fa fa-info-circle" title="${info}"&gt; &lt;/span&gt;
+    #end
+  &lt;/p&gt;
+#end
+&lt;p&gt;
+  &lt;label&gt;
+    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$escapetool.xml($value)" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
+    &lt;input type="text" name="${prefix}${name}" placeholder="$escapetool.xml($services.localization.render('PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder'))" value="#if(!$isDefaultService)$!escapetool.xml($!value)#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
+  &lt;/label&gt;
+&lt;/p&gt;
+{{/html}}</customDisplay>
+      <disabled>0</disabled>
+      <displayType>input</displayType>
+      <multiSelect>0</multiSelect>
+      <name>serviceURL</name>
+      <number>2</number>
+      <picker>0</picker>
+      <prettyName>Text mining service URL</prettyName>
+      <relationalStorage>0</relationalStorage>
+      <separator> </separator>
+      <separators>|, </separators>
+      <size>1</size>
+      <sort>none</sort>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <values/>
+      <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+    </serviceURL>
+  </class>
+  <object>
+    <name>PhenoTips.TextAnnotationConfigurationClass</name>
+    <number>0</number>
+    <className>XWiki.TranslationDocumentClass</className>
+    <guid>73cb26ef-fa65-466f-bfd3-bf5b1c86e1c2</guid>
+    <class>
+      <name>XWiki.TranslationDocumentClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <scope>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>scope</name>
+        <number>1</number>
+        <prettyName>Scope</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>GLOBAL|WIKI|USER|ON_DEMAND</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </scope>
+    </class>
+    <property>
+      <scope>WIKI</scope>
+    </property>
+  </object>
+</xwikidoc>
