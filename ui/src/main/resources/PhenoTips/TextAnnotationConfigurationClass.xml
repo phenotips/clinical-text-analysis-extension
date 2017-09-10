@@ -40,7 +40,8 @@
   <content>admin.textmining=Text mining
 phenotips.textMining.admin.title=Text mining service settings
 PhenoTips.TextAnnotationConfiguration_serviceURL=Text mining service URL
-PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is the default embedded text analyzer. To run the default analyzer at a different port, please use the "Other" option below with the URL "http://localhost:{other_port}/ctakes/".</content>
+PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is the default embedded text analyzer. To run the default analyzer at a different port, please use the "Other" option below with the URL "http://localhost:{other_port}/ctakes/".
+PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter service URL)</content>
   <class>
     <name>PhenoTips.TextAnnotationConfigurationClass</name>
     <customClass/>
@@ -70,7 +71,7 @@ PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is
   #end
   &lt;p&gt;
     &lt;label&gt;
-      &lt;input type="radio" name="${prefix}${name}" value="$url" #if($url == $value)checked="checked" #set($isDefaultService = true)#end/&gt;
+      &lt;input type="radio" name="${prefix}${name}" value="$escapetool.xml($url)" #if($url == $value)checked="checked" #set($isDefaultService = true)#end/&gt;
       $url
     &lt;/label&gt;
     #if ($info != '')
@@ -80,8 +81,8 @@ PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is
 #end
 &lt;p&gt;
   &lt;label&gt;
-    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$value" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
-    &lt;input type="text" name="${prefix}${name}" placeholder="Other (enter service URL)" value="#if(!$isDefaultService)$!value#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
+    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$escapetool.xml($value)" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
+    &lt;input type="text" name="${prefix}${name}" placeholder="$escapetool.xml($services.localization.render('PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder'))" value="#if(!$isDefaultService)$!escapetool.xml($!value)#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
   &lt;/label&gt;
 &lt;/p&gt;
 {{/html}}</customDisplay>
