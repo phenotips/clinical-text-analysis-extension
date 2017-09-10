@@ -72,7 +72,7 @@
   #end
   &lt;p&gt;
     &lt;label&gt;
-      &lt;input type="radio" name="${prefix}${name}" value="$url" #if($url == $value)checked="checked" #set($isDefaultService = true)#end/&gt;
+      &lt;input type="radio" name="${prefix}${name}" value="$escapetool.xml($url)" #if($url == $value)checked="checked" #set($isDefaultService = true)#end/&gt;
       $url
     &lt;/label&gt;
     #if ($info != '')
@@ -82,8 +82,8 @@
 #end
 &lt;p&gt;
   &lt;label&gt;
-    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$value" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
-    &lt;input type="text" name="${prefix}${name}" placeholder="Other (enter service URL)" value="#if(!$isDefaultService)$!value#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
+    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$escapetool.xml($value)" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
+    &lt;input type="text" name="${prefix}${name}" placeholder="$escapetool.xml($services.localization.render('PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder'))" value="#if(!$isDefaultService)$!escapetool.xml($!value)#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
   &lt;/label&gt;
 &lt;/p&gt;
 {{/html}}</customDisplay>
