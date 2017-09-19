@@ -105,6 +105,9 @@ public class CTakesAnnotationService extends ServerResource
             List<EntityMention> annotations = annotateText(content, jcas);
             List<Map<String, Object>> transformed = new ArrayList<>(annotations.size());
             for (EntityMention annotation : annotations) {
+                if (annotation == null) {
+                    continue;
+                }
                 Map<String, Object> map = new HashMap<>(3);
                 map.put("start", annotation.getBegin());
                 map.put("end", annotation.getEnd());
