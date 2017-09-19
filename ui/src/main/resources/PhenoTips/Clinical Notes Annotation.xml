@@ -421,7 +421,7 @@ function dismissSuggestion(termId, suggestionElt) {
   delete currentSuggestions[termId];
   suggestionBank.splice(deletedIdx, 1);
   Object.keys(currentSuggestions).forEach(function(key) {
-    if (currentSuggestions[key] > deletedIdx) {
+    if (currentSuggestions[key] &gt; deletedIdx) {
       currentSuggestions[key] -= 1;
     }
   });
@@ -659,7 +659,7 @@ function updateSuggestionCount() {
       <cache>forbid</cache>
     </property>
     <property>
-        <code>#template("colorThemeInit.vm")
+      <code>#template("colorThemeInit.vm")
 
 .loading-container {
   text-align: center;
