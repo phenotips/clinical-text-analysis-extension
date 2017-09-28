@@ -78,7 +78,7 @@ public class CTakesAnnotationService extends ServerResource
             ResourceSpecifier specifier = UIMAFramework.getXMLParser().parseResourceSpecifier(in);
             this.engine = UIMAFramework.produceAnalysisEngine(specifier);
             GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-            config.setMaxTotal(8);
+            config.setMaxTotal(3);
             config.setMinIdle(1);
             this.jcasPool = new GenericObjectPool<>(new CasFactory(this.engine), config);
         } catch (IOException | InvalidXMLException | ResourceInitializationException e) {
