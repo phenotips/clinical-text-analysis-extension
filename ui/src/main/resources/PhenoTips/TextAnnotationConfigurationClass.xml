@@ -41,6 +41,8 @@
 phenotips.textMining.admin.title=Text mining service settings
 PhenoTips.TextAnnotationConfiguration_serviceURL=Text mining service URL
 PhenoTips.TextAnnotationConfiguration_serviceURL_defaultLocalCtakes.hint=This is the default embedded text analyzer. To run the default analyzer at a different port, please use the "Other" option below with the URL "http://localhost:{other_port}/ctakes/".
+PhenoTips.TextAnnotationConfiguration_serviceURL_defaultServicesCtakes.hint=This is a free and secure service offered by the PhenoTips developers and the Toronto Hospital for Sick Children. The data is only processed live, in a secure virtual server. It is not stored, logged, forwarded, read, or accessed in any way.
+PhenoTips.TextAnnotationConfiguration_serviceURL_defaultServicesNcr.hint=This is a free and secure service offered by the PhenoTips developers and the Toronto Hospital for Sick Children. The data is processed at https://ncr.ccm.sickkids.ca/ using Neural Concept Recognizer, a research project under development at University of Toronto and the Centre for Computational Medicine at SickKids.
 PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter service URL)</content>
   <class>
     <name>PhenoTips.TextAnnotationConfigurationClass</name>
@@ -55,7 +57,9 @@ PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter 
       <cache>0</cache>
       <customDisplay>{{velocity}}
 #set ($defaultServices = {
-  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/'
+  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/',
+  'defaultServicesCtakes' : 'https://services.phenotips.org/ctakes/',
+  'defaultServicesNcr' : 'https://services.phenotips.org/ncr/'
 })
 #if ("$!value" == '')
   #set ($value = $defaultServices.get('defaultLocalCtakes'))
