@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.phenotips</groupId>
     <artifactId>clinical-text-analysis-extension</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-milestone-2</version>
   </parent>
   <artifactId>clinical-text-analysis-extension-ctakes-service</artifactId>
   <name>PhenoTips - Clinical Text Analysis - Ctakes server</name>
