@@ -91,7 +91,7 @@ public class TermAnnotation implements Comparable<TermAnnotation>
      */
     public String getSentence()
     {
-        return sentence;
+        return this.sentence;
     }
 
     /**
@@ -99,7 +99,7 @@ public class TermAnnotation implements Comparable<TermAnnotation>
      */
     public long getStartInSentence()
     {
-        return startInSentence;
+        return this.startInSentence;
     }
 
     /**
@@ -107,11 +107,12 @@ public class TermAnnotation implements Comparable<TermAnnotation>
      */
     public long getEndInSentence()
     {
-        return endInSentence;
+        return this.endInSentence;
     }
 
     /**
      * Set the sentence that this term appears in.
+     *
      * @param sentence the sentence.
      * @param startInSentence the position within the sentence where the term starts
      * @param endInSentence the position within the sentence where the term ends

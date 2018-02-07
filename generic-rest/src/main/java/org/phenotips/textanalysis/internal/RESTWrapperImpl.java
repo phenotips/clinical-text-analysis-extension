@@ -101,7 +101,7 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
             AnnotationAPI api = this.apiFactory.build(this.wikiConfiguration.getProperty(SERVICE_URL_CONFIGURATION_KEY,
                 this.baseConfiguration.getProperty(SERVICE_URL_GLOBAL_CONFIGURATION_KEY, DEFAULT_BASE_URL)));
             InputStream is = api.postForm("annotations/entities", params);
-            TypeReference reference = new TypeReference<List<RESTAnnotation>>()
+            TypeReference<List<RESTAnnotation>> reference = new TypeReference<List<RESTAnnotation>>()
             {
             };
             return this.mapper.readValue(is, reference);

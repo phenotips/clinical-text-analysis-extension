@@ -47,6 +47,8 @@ public interface TermAnnotationService
      */
     class AnnotationException extends Exception
     {
+        private static final long serialVersionUID = 4094004433719707519L;
+
         /**
          * Constructs a new AnnotationException with the specified detail message.
          *

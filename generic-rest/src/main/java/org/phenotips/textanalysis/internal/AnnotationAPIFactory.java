@@ -20,8 +20,8 @@ package org.phenotips.textanalysis.internal;
 import org.xwiki.component.annotation.Role;
 
 /**
- * Constructs annotation API instances bound to a given service.
- * This exists so that it is possible to have a component that hits more than one annotation endpoint.
+ * Constructs annotation API instances bound to a given service. This exists so that it is possible to have a component
+ * that hits more than one annotation endpoint.
  *
  * @version $Id$
  */
@@ -30,6 +30,7 @@ public interface AnnotationAPIFactory
 {
     /**
      * Construct a new AnnotationAPI instance bound to the given service url.
+     *
      * @param serviceURL the api endpoint that the returned object should hit
      * @return an AnnotationAPI instance bound to the serviceURL given
      */

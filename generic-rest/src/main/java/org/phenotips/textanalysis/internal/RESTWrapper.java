@@ -37,6 +37,7 @@ public interface RESTWrapper
 
     /**
      * Annotates the text given.
+     *
      * @param text the string to annotate
      * @return List of annotations
      * @throws TermAnnotationService.AnnotationException if something goes wrong
@@ -64,6 +65,7 @@ public interface RESTWrapper
 
             /**
              * Return the id.
+             *
              * @return the id
              */
             public String getId()
@@ -73,6 +75,7 @@ public interface RESTWrapper
 
             /**
              * Set the id.
+             *
              * @param id the id
              */
             public void setId(String id)
@@ -98,6 +101,7 @@ public interface RESTWrapper
 
         /**
          * Get the token.
+         *
          * @return the token
          */
         public Token getToken()
@@ -107,6 +111,7 @@ public interface RESTWrapper
 
         /**
          * Set the token.
+         *
          * @param token the token
          */
         public void setToken(Token token)
@@ -116,6 +121,7 @@ public interface RESTWrapper
 
         /**
          * Get the end of the annotation.
+         *
          * @return the end
          */
         public int getEnd()
@@ -125,6 +131,7 @@ public interface RESTWrapper
 
         /**
          * Set the end of the annotation.
+         *
          * @param end the end
          */
         public void setEnd(int end)
@@ -134,6 +141,7 @@ public interface RESTWrapper
 
         /**
          * Get the start of the annotation.
+         *
          * @return the start
          */
         public int getStart()
@@ -143,6 +151,7 @@ public interface RESTWrapper
 
         /**
          * Set the start of the annotation.
+         *
          * @param start the start
          */
         public void setStart(int start)
@@ -151,4 +160,3 @@ public interface RESTWrapper
         }
     }
 }
-

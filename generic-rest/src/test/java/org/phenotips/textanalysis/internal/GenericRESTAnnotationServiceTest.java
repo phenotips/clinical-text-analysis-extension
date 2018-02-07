@@ -60,7 +60,7 @@ public class GenericRESTAnnotationServiceTest
     @Test
     public void testSingleAnnotation() throws AnnotationException, ComponentLookupException, IOException
     {
-        client = this.mocker.getComponentUnderTest();
+        this.client = this.mocker.getComponentUnderTest();
         String term = "blue eyes";
         String text = "The lady has ";
         int start = text.length();
@@ -68,7 +68,7 @@ public class GenericRESTAnnotationServiceTest
         int end = start + term.length();
         String termId = "test id";
 
-        List<RESTWrapper.RESTAnnotation> result = new LinkedList<RESTWrapper.RESTAnnotation>();
+        List<RESTWrapper.RESTAnnotation> result = new LinkedList<>();
 
         /* Mock SciGraph wrapper */
         RESTWrapper wrapper = this.mocker.getInstance(RESTWrapper.class);
@@ -87,10 +87,10 @@ public class GenericRESTAnnotationServiceTest
         when(t.getId()).thenReturn(termId);
         when(vocabularyManager.resolveTerm(termId)).thenReturn(t);
 
-        List<TermAnnotation> expected = new LinkedList<TermAnnotation>();
+        List<TermAnnotation> expected = new LinkedList<>();
         expected.add(new TermAnnotation(start, end, t));
 
-        List<TermAnnotation> actual = client.annotate(text);
+        List<TermAnnotation> actual = this.client.annotate(text);
 
         assertEquals(expected, actual);
     }
@@ -105,7 +105,7 @@ public class GenericRESTAnnotationServiceTest
     @Test
     public void testOverlappingAnnotations() throws AnnotationException, ComponentLookupException, IOException
     {
-        client = this.mocker.getComponentUnderTest();
+        this.client = this.mocker.getComponentUnderTest();
         String term1 = "blue eyes";
         String term2 = "eyes";
         String text = "The layd has ";
@@ -117,7 +117,7 @@ public class GenericRESTAnnotationServiceTest
         String termId2 = "id2";
         text += term1;
 
-        List<RESTWrapper.RESTAnnotation> result = new LinkedList<RESTWrapper.RESTAnnotation>();
+        List<RESTWrapper.RESTAnnotation> result = new LinkedList<>();
 
         RESTWrapper.RESTAnnotation.Token token1 = new RESTWrapper.RESTAnnotation.Token();
         token1.setId(termId1);
@@ -148,11 +148,11 @@ public class GenericRESTAnnotationServiceTest
         when(t2.getId()).thenReturn(termId2);
         when(vocabularyManager.resolveTerm(termId2)).thenReturn(t2);
 
-        List<TermAnnotation> expected = new LinkedList<TermAnnotation>();
+        List<TermAnnotation> expected = new LinkedList<>();
         expected.add(new TermAnnotation(start1, end1, t1));
         expected.add(new TermAnnotation(start2, end2, t2));
 
-        List<TermAnnotation> actual = client.annotate(text);
+        List<TermAnnotation> actual = this.client.annotate(text);
         assertEquals(expected, actual);
     }
 

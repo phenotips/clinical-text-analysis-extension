@@ -18,7 +18,6 @@
 package org.phenotips.textanalysis.internal;
 
 import java.io.InputStream;
-
 import java.util.Map;
 
 /**
@@ -30,6 +29,7 @@ public interface AnnotationAPI
 {
     /**
      * Execute a post request to the method given, taking content to be the json body of the request.
+     *
      * @param method the method
      * @param content the content, to be interpreted as containing a json object
      * @return the response
@@ -39,6 +39,7 @@ public interface AnnotationAPI
 
     /**
      * Post the form given to the method given.
+     *
      * @param method the method
      * @param params the form parameters
      * @return the response
@@ -48,6 +49,7 @@ public interface AnnotationAPI
 
     /**
      * Send an empty post to the method given.
+     *
      * @param method the method
      * @return the response
      * @throws ServiceException if there's an error accessing the method
@@ -56,6 +58,7 @@ public interface AnnotationAPI
 
     /**
      * Send an empty get to the method given.
+     *
      * @param method the method
      * @return the response
      * @throws ServiceException if there's an error accessing the method
@@ -64,6 +67,7 @@ public interface AnnotationAPI
 
     /**
      * Return the service url in use.
+     *
      * @return the endpoint being used by this instance
      */
     String getServiceURL();
@@ -75,8 +79,11 @@ public interface AnnotationAPI
      */
     class ServiceException extends Exception
     {
+        private static final long serialVersionUID = 6012010423120407886L;
+
         /**
          * CTOR.
+         *
          * @param message the message
          */
         public ServiceException(String message)
@@ -86,6 +93,7 @@ public interface AnnotationAPI
 
         /**
          * CTOR with cause.
+         *
          * @param message the message
          * @param cause the cause.
          */

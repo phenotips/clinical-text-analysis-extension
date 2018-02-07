@@ -18,18 +18,16 @@
 package org.phenotips.textanalysis.internal;
 
 import org.phenotips.textanalysis.TermAnnotation;
-
-
-import org.junit.Test;
 import org.phenotips.vocabulary.VocabularyTerm;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
-
 
 public class TermAnnotationSentenceDetectorTest
 {
@@ -37,18 +35,18 @@ public class TermAnnotationSentenceDetectorTest
 
     /* This is where you miss heredocs. */
     private static final String TEXT = "Now is the winter of our discontent " +
-               "Made glorious summer by this son of York; " +
-               "And all the clouds that lowered upon our house " +
-               "In the deep bosom of the ocean buried. " +
-               "Now are our brows bound with victorious wreaths, " +
-               "Our bruised arms hung up for monuments, " +
-               "Our stern alarums changed to merry meetings, " +
-               "Our dreadful marches to delightful measures. " +
-               "Grim-visaged war hath smoothed his wrinkled front, " +
-               "And now, instead of mounting barbed steeds " +
-               "To fright the souls of fearful adversaries, " +
-               "He capers nimbly in a lady's chamber " +
-               "To the lascivious pleasing of a lute.";
+        "Made glorious summer by this son of York; " +
+        "And all the clouds that lowered upon our house " +
+        "In the deep bosom of the ocean buried. " +
+        "Now are our brows bound with victorious wreaths, " +
+        "Our bruised arms hung up for monuments, " +
+        "Our stern alarums changed to merry meetings, " +
+        "Our dreadful marches to delightful measures. " +
+        "Grim-visaged war hath smoothed his wrinkled front, " +
+        "And now, instead of mounting barbed steeds " +
+        "To fright the souls of fearful adversaries, " +
+        "He capers nimbly in a lady's chamber " +
+        "To the lascivious pleasing of a lute.";
 
     private static final String SENTENCE1;
 
@@ -69,7 +67,7 @@ public class TermAnnotationSentenceDetectorTest
     @Test
     public void testBasic()
     {
-        client = new TermAnnotationSentenceDetector();
+        this.client = new TermAnnotationSentenceDetector();
 
         List<TermAnnotation> annotations = new ArrayList<>(3);
         VocabularyTerm winterTerm = mock(VocabularyTerm.class);
@@ -87,25 +85,23 @@ public class TermAnnotationSentenceDetectorTest
         TermAnnotation nimbly = new TermAnnotation(491, 497, nimblyTerm);
         annotations.add(nimbly);
 
-        client.detectSentences(annotations, TEXT);
+        this.client.detectSentences(annotations, TEXT);
 
         assertEquals("winter",
-                winter.getSentence().
-                substring((int) winter.getStartInSentence(), (int) winter.getEndInSentence()));
+            winter.getSentence().substring((int) winter.getStartInSentence(), (int) winter.getEndInSentence()));
         assertEquals(SENTENCE1, winter.getSentence());
         assertEquals(11, winter.getStartInSentence());
         assertEquals(17, winter.getEndInSentence());
 
         assertEquals("monuments",
-                monuments.getSentence().
-                substring((int) monuments.getStartInSentence(), (int) monuments.getEndInSentence()));
+            monuments.getSentence().substring((int) monuments.getStartInSentence(),
+                (int) monuments.getEndInSentence()));
         assertEquals(SENTENCE2, monuments.getSentence());
         assertEquals(78, monuments.getStartInSentence());
         assertEquals(87, monuments.getEndInSentence());
 
         assertEquals("nimbly",
-                nimbly.getSentence().
-                substring((int) nimbly.getStartInSentence(), (int) nimbly.getEndInSentence()));
+            nimbly.getSentence().substring((int) nimbly.getStartInSentence(), (int) nimbly.getEndInSentence()));
         assertEquals(SENTENCE3, nimbly.getSentence());
         assertEquals(148, nimbly.getStartInSentence());
         assertEquals(154, nimbly.getEndInSentence());

@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Takes in lists of term annotations, as well as the text they appear in and
- * assigns sentences to them from the text.
+ * Takes in lists of term annotations, as well as the text they appear in and assigns sentences to them from the text.
  *
  * @version $Id$
  */
@@ -34,6 +33,7 @@ public class TermAnnotationSentenceDetector
 {
     /**
      * Attaches sentences to the term annotations given.
+     *
      * @param annotations the annotations
      * @param text the text where the annotations appear
      */

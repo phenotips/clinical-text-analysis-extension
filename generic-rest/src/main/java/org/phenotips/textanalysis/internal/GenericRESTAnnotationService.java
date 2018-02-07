@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
  * </pre>
  *
  * The service must respond as follows:
+ *
  * <pre>
  * [
  *      {
