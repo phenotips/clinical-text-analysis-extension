@@ -26,22 +26,16 @@ import org.phenotips.vocabulary.VocabularyTerm;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.CharBuffer;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.argThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -170,16 +164,15 @@ public class GenericRESTAnnotationServiceTest
      * @throws IOException if annotateEntities throws (hopefully never)
      */
     @Test
-    public void testAnnotateEmpty() throws AnnotationException, ComponentLookupException, IOException
+    public void annotateEmptyTextReturnsDirectly() throws AnnotationException, ComponentLookupException, IOException
     {
-        client = this.mocker.getComponentUnderTest();
-        String text = "";
-        List<RESTWrapper.RESTAnnotation> result = new LinkedList<RESTWrapper.RESTAnnotation>();
+        this.client = this.mocker.getComponentUnderTest();
+
+        assertTrue(this.client.annotate(null).isEmpty());
+        assertTrue(this.client.annotate("").isEmpty());
+        assertTrue(this.client.annotate(" \n\r \t ").isEmpty());
 
         RESTWrapper wrapper = this.mocker.getInstance(RESTWrapper.class);
-        when(wrapper.annotate(text)).thenReturn(result);
-
-        List<TermAnnotation> expected = new LinkedList<TermAnnotation>();
-        assertEquals(expected, client.annotate(text));
+        Mockito.verifyZeroInteractions(wrapper);
     }
 }

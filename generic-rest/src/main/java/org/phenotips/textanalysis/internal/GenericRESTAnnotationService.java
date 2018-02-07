@@ -25,11 +25,14 @@ import org.phenotips.vocabulary.VocabularyTerm;
 import org.xwiki.component.annotation.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of {@link TermAnnotationService} using a generic REST API endpoint.
@@ -79,7 +82,10 @@ public class GenericRESTAnnotationService implements TermAnnotationService
     @Override
     public List<TermAnnotation> annotate(String text) throws AnnotationException
     {
-        List<RESTWrapper.RESTAnnotation> annotations = wrapper.annotate(text);
+        if (StringUtils.isBlank(text)) {
+            return Collections.emptyList();
+        }
+        List<RESTWrapper.RESTAnnotation> annotations = this.wrapper.annotate(text);
         List<TermAnnotation> retval = new ArrayList<>(annotations.size());
         for (RESTWrapper.RESTAnnotation annotation : annotations) {
             String termId = annotation.getToken().getId().replace("hpo:", "").replace("_", ":");
