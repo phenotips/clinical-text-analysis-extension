@@ -107,6 +107,9 @@
       </serviceURL>
     </class>
     <property>
+      <disable>1</disable>
+    </property>
+    <property>
       <serviceURL>http://localhost:8080/ctakes/</serviceURL>
     </property>
   </object>
@@ -325,6 +328,7 @@
     </property>
     <property>
       <propertiesToShow>
+        <value>disable</value>
         <value>serviceURL</value>
       </propertiesToShow>
     </property>

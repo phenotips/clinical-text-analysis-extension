@@ -53,6 +53,20 @@ PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter 
     <defaultWeb/>
     <nameField/>
     <validationScript/>
+    <disable>
+      <customDisplay/>
+      <defaultValue/>
+      <disabled>0</disabled>
+      <displayFormType>checkbox</displayFormType>
+      <displayType/>
+      <name>disable</name>
+      <number>2</number>
+      <prettyName>Disable the text mining service</prettyName>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+    </disable>
     <serviceURL>
       <cache>0</cache>
       <customDisplay>{{velocity}}

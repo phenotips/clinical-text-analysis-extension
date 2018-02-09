@@ -26,6 +26,7 @@ import org.xwiki.configuration.ConfigurationSource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,13 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
     private static final String SERVICE_URL_CONFIGURATION_KEY = "serviceURL";
 
     /**
+     * The config key for the annotations service url.
+     */
+    private static final String SERVICE_DISABLE_GLOBAL_CONFIGURATION_KEY = "phenotips.textanalysis.internal.disable";
+
+    private static final String SERVICE_DISABLE_CONFIGURATION_KEY = "disable";
+
+    /**
      * The object for API interaction with scigraph.
      */
     @Inject
@@ -95,6 +103,11 @@ public class RESTWrapperImpl implements RESTWrapper, Initializable
     public List<RESTAnnotation> annotate(String text) throws TermAnnotationService.AnnotationException
     {
         try {
+            Boolean disabled = this.wikiConfiguration.getProperty(SERVICE_DISABLE_CONFIGURATION_KEY,
+                this.baseConfiguration.getProperty(SERVICE_DISABLE_GLOBAL_CONFIGURATION_KEY, Boolean.FALSE));
+            if (disabled == Boolean.TRUE) {
+                return Collections.emptyList();
+            }
             Map<String, String> params = new HashMap<>(2);
             params.put("content", text);
             params.put("includeCat", CATEGORY);
