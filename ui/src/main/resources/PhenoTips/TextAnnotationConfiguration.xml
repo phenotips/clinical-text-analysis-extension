@@ -52,11 +52,27 @@
       <defaultWeb/>
       <nameField/>
       <validationScript/>
+      <disable>
+        <customDisplay/>
+        <defaultValue/>
+        <disabled>0</disabled>
+        <displayFormType>checkbox</displayFormType>
+        <displayType/>
+        <name>disable</name>
+        <number>2</number>
+        <prettyName>Disable the text mining service</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </disable>
       <serviceURL>
         <cache>0</cache>
         <customDisplay>{{velocity}}
 #set ($defaultServices = {
-  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/'
+  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/',
+  'defaultServicesCtakes' : 'https://services.phenotips.org/ctakes/',
+  'defaultServicesNcr' : 'https://services.phenotips.org/ncr/'
 })
 #if ("$!value" == '')
   #set ($value = $defaultServices.get('defaultLocalCtakes'))
