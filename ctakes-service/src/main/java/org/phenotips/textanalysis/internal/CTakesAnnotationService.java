@@ -29,9 +29,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.ctakes.typesystem.type.textsem.EntityMention;
 import org.apache.uima.UIMAFramework;
 import org.apache.uima.analysis_engine.AnalysisEngine;
@@ -41,6 +38,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.ResourceSpecifier;
 import org.apache.uima.util.InvalidXMLException;
+import org.apache.uima.util.JCasPool;
 import org.apache.uima.util.XMLInputSource;
 import org.restlet.data.Form;
 import org.restlet.resource.Post;
@@ -57,8 +55,8 @@ public class CTakesAnnotationService extends ServerResource
     /** The UIMA analysis engine in use. */
     private AnalysisEngine engine;
 
-    /** A pool for Common Analysis System (CAS) objects, which are responsible for each text parsing request. */
-    private final ObjectPool<JCas> jcasPool;
+    /** A simple pool of JCas instances */
+    private final JCasPool jcasPool;
 
     /** Manages the HPO index to be used by CTAKES. */
     private HpoIndex index;
@@ -77,10 +75,7 @@ public class CTakesAnnotationService extends ServerResource
             XMLInputSource in = new XMLInputSource(engineXML);
             ResourceSpecifier specifier = UIMAFramework.getXMLParser().parseResourceSpecifier(in);
             this.engine = UIMAFramework.produceAnalysisEngine(specifier);
-            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-            config.setMaxTotal(3);
-            config.setMinIdle(1);
-            this.jcasPool = new GenericObjectPool<>(new CasFactory(this.engine), config);
+            this.jcasPool = new JCasPool(8, this.engine);
         } catch (IOException | InvalidXMLException | ResourceInitializationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -101,7 +96,7 @@ public class CTakesAnnotationService extends ServerResource
         String content = form.getFirstValue("content");
         JCas jcas = null;
         try {
-            jcas = this.jcasPool.borrowObject();
+            jcas = jcasPool.getJCas(0);
             List<EntityMention> annotations = annotateText(content, jcas);
             List<Map<String, Object>> transformed = new ArrayList<>(annotations.size());
             for (EntityMention annotation : annotations) {
@@ -124,7 +119,7 @@ public class CTakesAnnotationService extends ServerResource
             throw new ResourceException(e);
         } finally {
             if (jcas != null) {
-                this.jcasPool.returnObject(jcas);
+                this.jcasPool.releaseJCas(jcas);
             }
         }
     }
