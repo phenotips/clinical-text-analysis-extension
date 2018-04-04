@@ -123,7 +123,7 @@
       </serviceURL>
     </class>
     <property>
-      <disable>1</disable>
+      <disable>0</disable>
     </property>
     <property>
       <serviceURL>http://localhost:8080/ctakes/</serviceURL>
