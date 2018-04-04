@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.phenotips</groupId>
     <artifactId>clinical-text-analysis-extension</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-rc-1</version>
   </parent>
   <artifactId>clinical-text-analysis-extension-ui</artifactId>
   <name>PhenoTips - Clinical Text Analysis - User Interface Components</name>
