@@ -53,29 +53,27 @@ import org.restlet.resource.ServerResource;
 public class CTakesAnnotationService extends ServerResource
 {
     /** The UIMA analysis engine in use. */
-    private AnalysisEngine engine;
+    private static final AnalysisEngine ENGINE;
 
-    /** A simple pool of JCas instances */
-    private final JCasPool jcasPool;
+    /** A simple pool of JCas instances. */
+    private static final JCasPool JCAS_POOL;
 
     /** Manages the HPO index to be used by CTAKES. */
-    private HpoIndex index;
+    private static final HpoIndex HPO_INDEX;
 
     /** Basic constructor, initializes all the used services. */
-    public CTakesAnnotationService()
-    {
-        super();
+    static {
         try {
-            this.index = new HpoIndex();
-            if (!this.index.isIndexed()) {
-                this.index.reindex();
+            HPO_INDEX = new HpoIndex();
+            if (!HPO_INDEX.isIndexed()) {
+                HPO_INDEX.reindex();
             }
             URL engineXML =
                 CTakesAnnotationService.class.getClassLoader().getResource("pipeline/AnalysisEngine.xml");
             XMLInputSource in = new XMLInputSource(engineXML);
             ResourceSpecifier specifier = UIMAFramework.getXMLParser().parseResourceSpecifier(in);
-            this.engine = UIMAFramework.produceAnalysisEngine(specifier);
-            this.jcasPool = new JCasPool(8, this.engine);
+            ENGINE = UIMAFramework.produceAnalysisEngine(specifier);
+            JCAS_POOL = new JCasPool(8, ENGINE);
         } catch (IOException | InvalidXMLException | ResourceInitializationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -96,7 +94,7 @@ public class CTakesAnnotationService extends ServerResource
         String content = form.getFirstValue("content");
         JCas jcas = null;
         try {
-            jcas = jcasPool.getJCas(0);
+            jcas = JCAS_POOL.getJCas(0);
             List<EntityMention> annotations = annotateText(content, jcas);
             List<Map<String, Object>> transformed = new ArrayList<>(annotations.size());
             for (EntityMention annotation : annotations) {
@@ -119,7 +117,7 @@ public class CTakesAnnotationService extends ServerResource
             throw new ResourceException(e);
         } finally {
             if (jcas != null) {
-                this.jcasPool.releaseJCas(jcas);
+                JCAS_POOL.releaseJCas(jcas);
             }
         }
     }
@@ -133,7 +131,7 @@ public class CTakesAnnotationService extends ServerResource
     public Response reindex()
     {
         try {
-            this.index.reindex();
+            HPO_INDEX.reindex();
             return Response.ok().build();
         } catch (Exception ex) {
             return Response.serverError().build();
@@ -150,7 +148,7 @@ public class CTakesAnnotationService extends ServerResource
     private List<EntityMention> annotateText(String text, JCas jcas) throws AnalysisEngineProcessException
     {
         jcas.setDocumentText(text);
-        this.engine.process(jcas);
+        ENGINE.process(jcas);
         List<EntityMention> mentions = new ArrayList<>();
         Iterator<Annotation> iter = jcas.getAnnotationIndex(EntityMention.type).iterator();
         while (iter.hasNext()) {
