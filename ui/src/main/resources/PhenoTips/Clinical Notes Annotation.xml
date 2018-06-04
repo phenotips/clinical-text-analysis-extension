@@ -37,7 +37,9 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>false</hidden>
-  <content/>
+  <content>Phenotips.TextAnalysisExtension.title=Suggestions from Clinical Notes
+Phenotips.TextAnalysisExtension.noSuggestions=No suggestions to display
+Phenotips.TextAnalysisExtension.suggestionsStats=__START__ to __END__ of __numTotalSuggestions__ suggestions</content>
   <object>
     <name>PhenoTips.Clinical Notes Annotation</name>
     <number>0</number>
@@ -195,7 +197,7 @@ if (panel &amp;&amp; suggestionSources.size() &gt; 0) {
   var clinicalNotesSubPanel = 
     new Element('div', {"class" : "sub-panel"}).insert(
       new Element('h3', {"class" : "wikigeneratedheader"}).update(
-        "&lt;span&gt;&lt;strong&gt;Suggestions from Clinical Notes&lt;/strong&gt;&lt;/span&gt;"
+        "&lt;span&gt;&lt;strong&gt;$escapetool.xml($services.localization.render('Phenotips.TextAnalysisExtension.title'))&lt;/strong&gt;&lt;/span&gt;"
       ).insert(refreshButton)
     ).insert(widgetContainer);
   panel.insert({top : clinicalNotesSubPanel});
@@ -560,13 +562,14 @@ function updateSuggestionCount() {
   /* Arrays are 0 indexed, but users are not. */
   var start = currentFirstSuggestion + 1;
   if(numTotalSuggestions &gt; 0) {
-    $("suggestion-count").update(start + " to " + end + " of " + numTotalSuggestions + " suggestions");
+    var text = "$escapetool.xml($services.localization.render('Phenotips.TextAnalysisExtension.suggestionsStats'))";
+    text = text.replace('__START__', start).replace('__END__', end).replace('__numTotalSuggestions__', numTotalSuggestions);
+    $("suggestion-count").update(text);
   } else {
-    $("suggestion-count").update("No suggestions to display");
+    $("suggestion-count").update("$escapetool.xml($services.localization.render('Phenotips.TextAnalysisExtension.noSuggestions'))");
   }
 }
-});
-      </code>
+});</code>
     </property>
     <property>
       <name/>
@@ -862,6 +865,41 @@ fields=</parameters>
     </property>
     <property>
       <scope>wiki</scope>
+    </property>
+  </object>
+  <object>
+    <name>PhenoTips.Clinical Notes Annotation</name>
+    <number>0</number>
+    <className>XWiki.TranslationDocumentClass</className>
+    <guid>73cb26ef-fa65-466f-bfd3-bf5b1c86e1c9</guid>
+    <class>
+      <name>XWiki.TranslationDocumentClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <scope>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>scope</name>
+        <number>1</number>
+        <prettyName>Scope</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>GLOBAL|WIKI|USER|ON_DEMAND</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </scope>
+    </class>
+    <property>
+      <scope>WIKI</scope>
     </property>
   </object>
 </xwikidoc>
