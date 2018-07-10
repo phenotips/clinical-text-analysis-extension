@@ -746,6 +746,7 @@ function updateSuggestionCount() {
 }
 
 #suggestions-container &gt; * {
+  display: table-cell;
   vertical-align: middle;
 }
 
