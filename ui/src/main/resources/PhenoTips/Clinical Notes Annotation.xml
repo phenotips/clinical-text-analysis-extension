@@ -191,7 +191,7 @@ var panel = $$(".current-phenotype-selection")[0];
 var suggestionSourcesIds = ['indication_for_referral', 'medical_history'];
 var suggestionSources = $$('textarea[name$="' + suggestionSourcesIds.join('"], textarea[name$="') + '"]');
 var _getSourceTexts = function() {
- return suggestionSources.pluck('value').join('.\n');
+ return suggestionSources.pluck('value').findAll(Prototype.K).join('.\n');
 }
 if (panel &amp;&amp; suggestionSources.size() &gt; 0) {
   var clinicalNotesSubPanel = 
