@@ -70,12 +70,10 @@
         <cache>0</cache>
         <customDisplay>{{velocity}}
 #set ($defaultServices = {
-  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/',
-  'defaultServicesCtakes' : 'https://services.phenotips.org/ctakes/',
   'defaultServicesNcr' : 'https://services.phenotips.org/ncr/'
 })
 #if ("$!value" == '')
-  #set ($value = $defaultServices.get('defaultLocalCtakes'))
+  #set ($value = $defaultServices.get('defaultServicesNcr'))
 #end
 #set ($isDefaultService = false)
 {{html clean="false" wiki="false"}}
@@ -96,12 +94,6 @@
     #end
   &lt;/p&gt;
 #end
-&lt;p&gt;
-  &lt;label&gt;
-    &lt;input type="radio" name="${prefix}${name}" #if(!$isDefaultService)value="$escapetool.xml($value)" checked="checked"#else value=""#end onchange="if (this.checked) {this.next('input').focus()}"/&gt;
-    &lt;input type="text" name="${prefix}${name}" placeholder="$escapetool.xml($services.localization.render('PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder'))" value="#if(!$isDefaultService)$!escapetool.xml($!value)#end" onfocus="this.previous().checked='checked'" onchange="this.previous().value=this.value" style="width: 90%"/&gt;
-  &lt;/label&gt;
-&lt;/p&gt;
 {{/html}}</customDisplay>
         <disabled>0</disabled>
         <displayType>input</displayType>
@@ -123,10 +115,10 @@
       </serviceURL>
     </class>
     <property>
-      <disable>0</disable>
+      <disable>1</disable>
     </property>
     <property>
-      <serviceURL>http://localhost:8080/ctakes/</serviceURL>
+      <serviceURL>https://services.phenotips.org/ncr/</serviceURL>
     </property>
   </object>
   <object>
