@@ -71,12 +71,11 @@ PhenoTips.TextAnnotationConfiguration_serviceURL_other.placeholder=Other (enter 
       <cache>0</cache>
       <customDisplay>{{velocity}}
 #set ($defaultServices = {
-  'defaultLocalCtakes' : 'http://localhost:8080/ctakes/',
   'defaultServicesCtakes' : 'https://services.phenotips.org/ctakes/',
   'defaultServicesNcr' : 'https://services.phenotips.org/ncr/'
 })
 #if ("$!value" == '')
-  #set ($value = $defaultServices.get('defaultLocalCtakes'))
+  #set ($value = $defaultServices.get('defaultServicesNcr'))
 #end
 #set ($isDefaultService = false)
 {{html clean="false" wiki="false"}}
