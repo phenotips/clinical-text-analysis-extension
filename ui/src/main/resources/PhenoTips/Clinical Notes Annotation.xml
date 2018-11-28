@@ -117,7 +117,7 @@ Phenotips.TextAnalysisExtension.suggestionsStats=__START__ to __END__ of __numTo
       </use>
     </class>
     <property>
-      <cache>forbid</cache>
+      <cache>long</cache>
     </property>
     <property>
       <code>document.observe('xwiki:dom:loaded', function() {
@@ -674,7 +674,7 @@ function updateSuggestionCount() {
       </use>
     </class>
     <property>
-      <cache>forbid</cache>
+      <cache>long</cache>
     </property>
     <property>
       <code>#template("colorThemeInit.vm")
